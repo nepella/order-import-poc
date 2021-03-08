@@ -150,12 +150,12 @@ public class OrderImportShortened {
 				DataField twoFourFive = (DataField) record.getVariableField("245");
 			    String title = twoFourFive.getSubfieldsAsString("a");
 			    DataField nineEighty = (DataField) record.getVariableField("980");
-			    String objectCode = nineEighty.getSubfieldsAsString("o");
-			    String fundCode = nineEighty.getSubfieldsAsString("b");
+			    //String objectCode = nineEighty.getSubfieldsAsString("o");
+			    String fundCode = nineEighty.getSubfieldsAsString("h");
 			    String vendorCode =  nineEighty.getSubfieldsAsString("v");
 			    String notes =  nineEighty.getSubfieldsAsString("n");
-			    String quantity =  nineEighty.getSubfieldsAsString("q");
-			    String price = nineEighty.getSubfieldsAsString("m");
+			    String quantity =  nineEighty.getSubfieldsAsString("g");
+			    String price = nineEighty.getSubfieldsAsString("e");
 			    String electronicIndicator = nineEighty.getSubfieldsAsString("z");
 			    String vendorItemId = nineEighty.getSubfieldsAsString("c");
 			    Integer quanityNo = 0; //INIT
@@ -252,14 +252,14 @@ public class OrderImportShortened {
 					orderLine.put("vendorDetail", vendorDetail);
 				}
 				
-				//TAG FOR THE PO LINE
+				/* //TAG FOR THE PO LINE
 				if (objectCode != null) {
 					JSONArray tagList = new JSONArray();
 					tagList.put(objectCode);
 					JSONObject tags = new JSONObject();
 					tags.put("tagList", tagList);
 					orderLine.put("tags", tags);
-				}
+				} */
 				
 				orderLine.put("id", orderLineUUID);
 				orderLine.put("source", "User");
@@ -506,9 +506,9 @@ public class OrderImportShortened {
 		while(reader.hasNext()) {
 				try {
 			    	record = reader.next();    					    
-			    	//GET THE 980s FROM THE MARC RECORD
+			    	//GET THE 980s and 981s FROM THE MARC RECORD
 				    DataField nineEighty = (DataField) record.getVariableField("980");
-				    
+				    DataField nineEightyOne = (DataField) record.getVariableField("981");
 				    DataField twoFourFive = (DataField) record.getVariableField("245");
 				    String title = twoFourFive.getSubfieldsAsString("a");
 				    //REMOVED - NOT NEEDED String theOne = ((ControlField) record.getVariableField("001")).getData();
@@ -524,12 +524,13 @@ public class OrderImportShortened {
 					}
 			    	
 					
-					String objectCode = nineEighty.getSubfieldsAsString("o");
-				    String fundCode = nineEighty.getSubfieldsAsString("b");
+					//String objectCode = nineEighty.getSubfieldsAsString("o");
+				    String fundCode = nineEighty.getSubfieldsAsString("h");
 				    String vendorCode =  nineEighty.getSubfieldsAsString("v");
-				    String notes =  nineEighty.getSubfieldsAsString("n");
+				    String notes =  nineEightyOne.getSubfieldsAsString("n");
+					String rushIndicator =  nineEightyOne.getSubfieldsAsString("q");
 				    String quantity =  nineEighty.getSubfieldsAsString("q");
-				    String price = nineEighty.getSubfieldsAsString("m");
+				    String price = nineEighty.getSubfieldsAsString("e");
 				    String electronicIndicator = nineEighty.getSubfieldsAsString("z");
 				    String vendorItemId = nineEighty.getSubfieldsAsString("c");
 				    Integer quanityNo = 0;
@@ -537,7 +538,7 @@ public class OrderImportShortened {
 
 				    
 				    Map<String, String> requiredFields = new HashMap<String, String>();
-				    requiredFields.put("Object code",objectCode);
+				    //requiredFields.put("Object code",objectCode);
 				    requiredFields.put("Fund code",fundCode);
 				    requiredFields.put("Vendor Code",vendorCode);
 				    requiredFields.put("Price" , price);
@@ -562,8 +563,8 @@ public class OrderImportShortened {
 				    //STOP THE PROCESS IF AN ERRORS WERE FOUND
 				    JSONObject orgValidationResult = validateOrganization(vendorCode, title, token, baseOkapEndpoint);
 				    if (orgValidationResult != null) responseMessages.put(orgValidationResult);
-				    JSONObject objectValidationResult = validateObjectCode(objectCode, title, token, baseOkapEndpoint);
-				    if (objectValidationResult != null) responseMessages.put(objectValidationResult);
+				    //JSONObject objectValidationResult = validateObjectCode(objectCode, title, token, baseOkapEndpoint);
+				    //if (objectValidationResult != null) responseMessages.put(objectValidationResult);
 				    JSONObject fundValidationResult = validateFund(fundCode, title, token, baseOkapEndpoint, price);
 				    if (fundValidationResult != null) responseMessages.put(fundValidationResult);
 				    return responseMessages;
