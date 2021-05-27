@@ -9,7 +9,6 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.1/css/bulma.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-	<link href="https://fonts.googleapis.com/css?family=Special+Elite" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Old+Standard+TT" rel="stylesheet"> 
 </head>
 
@@ -46,6 +45,14 @@
 	color: #a94442 !important;
 }
 
+.metadata {
+  margin: .4em 0;
+  padding-left: .6em;
+  font-family: monospace, monospace;
+  font-size: .8em;
+  background: #fff;
+}
+
 #tabs-with-content .tabs:not (:last-child) {
 	margin-bottom: 0;
 }
@@ -77,13 +84,13 @@
 	
 	<div class="container">
 		<div class="tile is-ancestor">
-			<div class="tile is-vertical is-8">
+			<div class="tile is-vertical is-11">
 				<div class="tile">
 					<div class="tile is-parent is-vertical">
 						<div class="box">
 							<!--  left box start -->
 							<div id="tabs-with-content">
-								<div class="tabs is-centered">
+								<div class="tabs">
 									<ul>
 									<li>Upload File</li>
 									</ul>
@@ -126,10 +133,10 @@
 									<div class="tile is-parent">
 				<article class="tile is-child notification is-light">
 					<div class="content">
-						<p class="title">Response<span style="color:#f5f5f5">6-29-20B</span></p>
+						<p class="title">Results</p>
 						<p class="subtitle"></p>
 						<div id="poNumber"></div>
-						<div id="logcontent" class="content" style="font-family: 'Special Elite', cursive;"></div>
+						<div id="logcontent" class="content"></div>
 					</div>
 				</article>
 			</div>
@@ -142,6 +149,7 @@
 	</div>
 	<!-- END CONTENTS-->
 	<script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/autolinker/3.14.3/Autolinker.min.js" integrity="sha512-m+WCk8eyR3wZz7/BN7rVif/clwuqagMNqGAqsGhCofTUEVZLDMVjSRDzzW/ggUx4ILYpw5qHHPjyGyrrXftI2w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 
 <script>
@@ -171,6 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script>
 function sendRequest() {
+	$('#logcontent').empty();
 	$('#sendFile').addClass('is-loading'); 
 	var getUrl = window.location;
 	var uploadUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1]+"/import/service/upload";    
@@ -216,6 +225,10 @@ Handlebars.registerHelper('formatTime', function(date, format) {
 	var mmnt = moment(date);
 	return mmnt.format(format);
 });
+
+Handlebars.registerHelper('linkify', function (string) {
+	return Autolinker.link(string);
+});
 </script>
 
 <script>
@@ -256,21 +269,32 @@ function showname() {
 }
 </script>
 
-<script id="orderTemplate" type="text/x-handlebars-template"> 
-<p><b>Created Purchase Order Number</b>: {{this.0.poNumber}}</p>
-{{#each this}} 	
-	<br /> <b>Title</b>: {{title}}
-    <br /> <b>Location</b>: {{location}}
-    <br /> <b>OrderLineId</b>: {{id}}
-    <br /> <b>001</b>: {{theOne}}
-    <br />
-    {{#if error}}
-	 <br /> <b>ERROR:</b> {{error}} 
-     <hr />
-     <br />
-    {{/if}}
-{{/each}}
+<script id="orderTemplate" type="text/x-handlebars-template">
+{{#if this.0.poUUID}}
+  <p><b>Created Purchase Order Number</b>: <a href="${baseFolioUrl}orders/view/{{this.0.poUUID}}" title="View this PO in FOLIO Orders app" target="_blank">{{this.0.poNumber}}</a></p>
+{{/if}}
 
+<ul>
+  {{#each this}}
+    <li>
+      {{#if error}}
+        <h5>ERROR:</h5>
+        {{error}}
+      {{else}}
+        <dl>
+          <dt><a href="${baseFolioUrl}orders/lines/view/{{poLineUUID}}" title="View this PO Line in FOLIO Orders app" target="_blank">{{poLineNumber}}</a></dt>
+          <dd><a href="${baseFolioUrl}inventory/view/{{instanceUUID}}" title="View this Instance in FOLIO Inventory app" target="_blank">{{title}}</a></dd>
+          <dd class="metadata">{{instanceHrid}}</dd>
+          <dd class="metadata"><strong>{{requester}}</strong></dd>
+          <dd class="metadata">{{{linkify internalNote}}}</dd>
+          <dd class="metadata">{{{linkify receivingNote}}}</dd>
+          <!-- <dt>Location</dt> -->
+          <!-- <dd>{{location}}</dd> -->
+        </dl>
+      {{/if}}
+    </li>
+  {{/each}}
+</ul>
 </script>
 
 </html>

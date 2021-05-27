@@ -353,24 +353,38 @@ public class OrderImport {
 				 
 				record = reader2.next();				
 				JSONObject responseMessage = new JSONObject();
-				responseMessage.put("poNumber", poNumberObj.get("poNumber"));				 
+				responseMessage.put("poNumber", poNumberObj.get("poNumber"));
+				responseMessage.put("poUUID", orderUUID.toString());
 				
 				DataField twoFourFive = (DataField) record.getVariableField("245");
 				DataField nineEighty = (DataField) record.getVariableField("980");
 				DataField nineEightyOne = (DataField) record.getVariableField("981");
 			    DataField nineFiveTwo = (DataField) record.getVariableField("952"); 
-			    
-				String title = marcUtils.getTitle(twoFourFive);
-				responseMessage.put("title", title);
 				
 				String locationName = marcUtils.getLocation(nineFiveTwo);				
 				
 				UUID snapshotId = UUID.randomUUID();
 				UUID recordTableId = UUID.randomUUID();					
 				
+				String poLineUUID = updatedPurchaseOrderJson.getJSONArray("compositePoLines").getJSONObject(numRec).getString("id");
+				String poLineNumber = updatedPurchaseOrderJson.getJSONArray("compositePoLines").getJSONObject(numRec).getString("poLineNumber");
 				String instanceId = updatedPurchaseOrderJson.getJSONArray("compositePoLines").getJSONObject(numRec).getString("instanceId");
+				String title = updatedPurchaseOrderJson.getJSONArray("compositePoLines").getJSONObject(numRec).getString("titleOrPackage");
+				String requester = updatedPurchaseOrderJson.getJSONArray("compositePoLines").getJSONObject(numRec).optString("requester");
+				String internalNote = updatedPurchaseOrderJson.getJSONArray("compositePoLines").getJSONObject(numRec).optString("description");
+				JSONObject polDetails = updatedPurchaseOrderJson.getJSONArray("compositePoLines").getJSONObject(numRec).optJSONObject("details");
 				
-				responseMessage.put("id", orderLineMap.get(numRec));
+				String receivingNote = null;
+				if (polDetails != null) {
+					receivingNote = polDetails.optString("receivingNote");
+				}
+				
+				responseMessage.put("poLineUUID", poLineUUID);
+				responseMessage.put("poLineNumber", poLineNumber);
+				responseMessage.put("title", title);
+				responseMessage.put("requester", requester);
+				responseMessage.put("internalNote", internalNote);
+				responseMessage.put("receivingNote", receivingNote);
 				
 				//GET THE INSTANCE RECORD FOLIO CREATED, SO WE CAN ADD BIB INFO TO IT:
 				logger.debug("get InstanceResponse");
@@ -518,7 +532,8 @@ public class OrderImport {
 				logger.debug("Update holdings record");
 				String createHoldingsResponse = apiService.callApiPut(baseOkapEndpoint + "holdings-storage/holdings/" + holdingRecord.getString("id"), holdingRecord,token);
 				
-				responseMessage.put("theOne", hrid);
+				responseMessage.put("instanceHrid", hrid);
+				responseMessage.put("instanceUUID", instanceId);
 				responseMessage.put("location", locationName +" ("+ lookupTable.get(locationName + "-location") +")");				
 				responseMessages.put(responseMessage);
 				numRec++;
