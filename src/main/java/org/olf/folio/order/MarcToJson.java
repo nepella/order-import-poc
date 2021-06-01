@@ -325,6 +325,7 @@ public class MarcToJson {
                 DataField twoFourFive = (DataField) record.getVariableField("245");
                 DataField nineEighty = (DataField) record.getVariableField("980");
                 DataField nineEightyOne = (DataField) record.getVariableField("981");
+                DataField nineSixtyOne = (DataField) record.getVariableField("961");
                 
                 String title = marcUtils.getTitle(twoFourFive);
                 if (isDebug()) {
@@ -341,7 +342,7 @@ public class MarcToJson {
                 }
                 
                 String price = marcUtils.getPrice(nineEightyOne);                
-                final String vendorItemId = marcUtils.getVendorItemId(nineEighty);
+                final String vendorItemId = marcUtils.getVendorItemId(nineSixtyOne);
                 
                 //String personName = marcUtils.getPersonName(nineEighty);
                 
@@ -389,15 +390,18 @@ public class MarcToJson {
                 location.put("locationId", lookupTable.get(locationName + "-location"));
                 locations.put(location);
                  
-                //VENDOR REFERENCE NUMBER IF INCLUDED IN THE MARC RECORD:
-                if (vendorItemId != null) {
+                //VENDOR REFERENCE NUMBER IF INCLUDED IN THE MARC RECORD:                
+                if (StringUtils.isNotEmpty(vendorItemId)) {                    
+                    JSONArray referenceNumbers = new JSONArray();
                     JSONObject vendorDetail = new JSONObject();
-                    vendorDetail.put("instructions", "");
-                    vendorDetail.put("refNumber", vendorItemId);
-                    vendorDetail.put("refNumberType", "Internal vendor number");
-                    vendorDetail.put("vendorAccount", "");
+                    JSONObject referenceNumber = new JSONObject();
+                    referenceNumber.put("refNumber", vendorItemId);
+                    referenceNumber.put("refNumberType", "Vendor internal number");
+                    referenceNumbers.put(referenceNumber);
+                    vendorDetail.put("referenceNumbers", referenceNumbers);
                     orderLine.put("vendorDetail", vendorDetail);
-                }                
+                }
+                
                 UUID orderLineUUID = UUID.randomUUID();
                 orderLine.put("id", orderLineUUID);
                 //responseMessage.put("id", orderLineUUID.toString());
