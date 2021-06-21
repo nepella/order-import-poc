@@ -57,7 +57,8 @@ public class MarcToJson {
     private ApiService apiService;
     
     private String marcFileName;
-    private boolean debug;    
+    private boolean debug;
+    private boolean rushPO = false;
 
     private String endpoint;
     
@@ -278,12 +279,7 @@ public class MarcToJson {
  
         String materialTypeName = "Book";
         String ISBNId = this.lookupTable.get("ISBN");
-        String invalidISBN = this.lookupTable.get("Invalid ISBN");
-        String personalNameTypeId = this.lookupTable.get("Personal name");
-        
-        logger.info("Personal name: "+ personalNameTypeId);
-        logger.info("ISBN: "+ ISBNId);
-        logger.info("Invalid ISBN: "+ invalidISBN);
+        String personalNameTypeId = this.lookupTable.get("Personal name");        
         
         JSONArray responseMessages = new JSONArray();        
         JSONArray errorMessages = new JSONArray();
@@ -321,9 +317,6 @@ public class MarcToJson {
         MarcReader reader = new MarcStreamReader(in);
         
         Record record = null;
-        //if (isDebug()) {
-        //    System.out.println("reading marc file: "+ this.marcFileName);    
-        //}
         int numRec = 0;
         
         while (reader.hasNext()) {
@@ -338,6 +331,7 @@ public class MarcToJson {
                 DataField nineEighty = (DataField) record.getVariableField("980");
                 DataField nineEightyOne = (DataField) record.getVariableField("981");
                 DataField nineSixtyOne = (DataField) record.getVariableField("961");
+                DataField twoSixtyFour = (DataField) record.getVariableField("264");
                 
                 String title = marcUtils.getTitle(twoFourFive);
                 if (isDebug()) {
@@ -390,6 +384,8 @@ public class MarcToJson {
                 }
                 final String fundEndpoint = this.getEndpoint() + "finance/funds?limit=30&offset=0&query=((code='" + fundCode + "'))";
                 final String fundResponse = this.apiService.callApiGet(fundEndpoint, token);
+                
+                
                                 
                  
                 // CREATING THE PURCHASE ORDER 
@@ -450,7 +446,6 @@ public class MarcToJson {
                 }
                 
                 // get ISBN values in a productIds array and add to detailsObject if not empty
-                //JSONArray productIds = marcUtils.getISBN(record, ISBNId, invalidISBN);
                 JSONArray productIds = new JSONArray();
                 JSONArray identifiers = marcUtils.buildIdentifiers(record, lookupTable);
                 Iterator identIter = identifiers.iterator();
@@ -458,21 +453,19 @@ public class MarcToJson {
                     JSONObject identifierObj = (JSONObject) identIter.next();
                     String identifierType = identifierObj.getString("identifierTypeId");
                     String oldVal = identifierObj.getString("value");
-                    //if (identifierType.equals(ISBNId)) {
-                        JSONObject productId = new JSONObject();
-                        String newVal = StringUtils.substringBefore(oldVal, " ");
-                        String qualifier = StringUtils.substringAfter(oldVal, " ");
-                        productId.put("productId", newVal);
-                        productId.put("productIdType", identifierType);
-                        if (StringUtils.isNotEmpty(qualifier)) {
-                            productId.put("qualifier", qualifier);
-                        }
-                        productIds.put(productId);
-                   //}
+                    JSONObject productId = new JSONObject();
+                    String newVal = StringUtils.substringBefore(oldVal, " ");
+                    String qualifier = StringUtils.substringAfter(oldVal, " ");
+                    productId.put("productId", newVal);
+                    productId.put("productIdType", identifierType);
+                    if (StringUtils.isNotEmpty(qualifier)) {
+                        productId.put("qualifier", qualifier);
+                    }
+                    productIds.put(productId);
                     
                 }
                 if (productIds.length() > 0) {
-                    logger.info(productIds.toString(3));
+                    logger.debug(productIds.toString(3));
                     detailsObject.put("productIds", productIds);
                 }                  
                 if (! detailsObject.isEmpty()) {
@@ -509,10 +502,19 @@ public class MarcToJson {
                     orderLine.put("selector", selector);
                 }
                 
-                // get requester
-                String requester = marcUtils.getRequester(nineEightyOne);
-                if (StringUtils.isNotEmpty(requester)) {
-                    orderLine.put("requester", requester);
+                 
+                
+                // add publisher and publicationDate
+                String publisher = marcUtils.getPublisher(record);
+                if (StringUtils.isNotEmpty(publisher)) {
+                    orderLine.put("publisher", publisher);
+                }
+                
+                if (twoSixtyFour != null) {
+                    String pubYear = marcUtils.getPublicationDate(twoSixtyFour);
+                    if (StringUtils.isNotEmpty(pubYear)) {                        
+                        orderLine.put("publicationDate", pubYear);
+                    }
                 }
                 
                 JSONObject fundsObject = new JSONObject(fundResponse);
@@ -525,15 +527,20 @@ public class MarcToJson {
                 funds.put(fundDist);
                 orderLine.put("fundDistribution", funds);
 
-                String numRecString = new String();
-                if (numRec < TEN) {
-                    numRecString = "0" + String.valueOf(numRec);
+                // get requester
+                String requester = marcUtils.getRequester(nineEightyOne);
+                if (StringUtils.isNotEmpty(requester)) {
+                    orderLine.put("requester", requester);
+                    rushPO = true;
+                }
+
+                // if rushPO is ever set, prefix the poNumber with "RUSH"
+                if (rushPO) {
+                    order.put("poNumberPrefix", "RUSH");
+                    order.put("poNumber", "RUSH"+ poNumberObj.get("poNumber"));
                 } else {
-                    numRecString = String.valueOf(numRec);
-                } 
-                    
-                //String poLineNumber = poNumberObj.get("poNumber") + "-" + numRecString;
-                //orderLine.put("poLineNumber", poLineNumber);
+                    order.put("poNumber", poNumberObj.get("poNumber"));
+                }
                 orderLine.put("purchaseOrderId", orderUUID.toString());
                 poLines.put(orderLine);
                 order.put("compositePoLines", poLines);

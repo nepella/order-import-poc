@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -44,6 +46,10 @@ public class MarcUtils {
 	
 	private final String LOCATION = "b"; // 952$b
 	private final String REQUESTER = "r"; // 981$r
+	
+	private final String PUBLISHER = "b"; // 264$b
+    private final String PUBLISHER_LOCATION = "a"; // 264$a
+    private final String PUBLICATION_DATE = "c"; // 264$c
 
 	public MarcUtils() {
 		// TODO Auto-generated constructor stub
@@ -188,6 +194,41 @@ public class MarcUtils {
 		}
 		return electronicIndicator;
 	}
+	
+	public String getPublisher(Record record) {
+        String publisher = new String();
+        List<DataField> datafields = new ArrayList<DataField>();
+        List<DataField> fields = record.getDataFields();        
+        
+        for (DataField df: fields) {
+            char id2 = df.getIndicator2();
+            if (df.getTag().equals("264") && id2 == '1' ) {
+                datafields.add(df);
+            }
+        }
+        if (datafields.size() > 0 ) {
+            DataField twoSixtyFour = datafields.get(0);
+            List<Subfield> subfields = twoSixtyFour.getSubfields(PUBLISHER);
+            
+            for (Subfield sf: subfields) {
+                publisher += sf.getData() + " ";
+            }
+        } else {
+            return null;
+        }
+        return StringUtils.removeEnd(publisher.trim(), ",").trim();
+    }
+    
+    public String getPublicationDate(DataField twoSixtyFour ) {
+        String publicationDate = new String();
+        if (twoSixtyFour != null) {
+            publicationDate = twoSixtyFour.getSubfieldsAsString(PUBLICATION_DATE);
+            
+        } else {
+            return null;
+        }
+        return matchYear(publicationDate);
+    }
 	
 	
 	
@@ -353,7 +394,23 @@ public class MarcUtils {
 	    } catch (NumberFormatException e) {
 	        return "0.00";
 	    }
-	}	
+	}
+	
+	public String matchYear(String pubDate) {
+        String year = new String();
+        try {
+            Pattern pattern = Pattern.compile("(\\d{4})");
+            Matcher matcher = pattern.matcher(pubDate);
+
+            if (matcher.find()) {
+               year = matcher.group(1);
+            }
+            return year;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+	
 
     public String recordToMarcJson(Record record) throws IOException {
       try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {

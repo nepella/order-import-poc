@@ -40,6 +40,7 @@ public class OrderImport {
 	private HashMap<String, String> lookupTable;
 	private HashMap<String, String> billingMap;
 	private String tenant;
+	private boolean rushPO = false;
 	
 	private ApiService apiService;
 	MarcUtils marcUtils = new MarcUtils();
@@ -150,7 +151,6 @@ public class OrderImport {
 		order.put("approved", true);
 		order.put("workflowStatus", "Open");
 		order.put("billTo", billingUUID);
-		order.put("poNumber", poNumberObj.get("poNumber"));
 		
 		JSONArray poLines = new JSONArray();
 		
@@ -172,6 +172,7 @@ public class OrderImport {
 			    DataField nineFiveTwo = (DataField) record.getVariableField("952");
 			    DataField nineEightyOne = (DataField) record.getVariableField("981");
 			    DataField nineSixtyOne = (DataField) record.getVariableField("961");
+			    DataField twoSixtyFour = (DataField) record.getVariableField("264");
 			    
 				String title = marcUtils.getTitle(twoFourFive);						 
 				String fundCode = marcUtils.getFundCode(nineEighty);
@@ -333,13 +334,20 @@ public class OrderImport {
 				String selector = marcUtils.getSelector(nineEighty);
 				if (StringUtils.isNotEmpty(selector)) {
 					orderLine.put("selector", selector);
-				}
+				} 
 				
-				// get requester
-				String requester = marcUtils.getRequester(nineEightyOne);
-				if (StringUtils.isNotEmpty(requester)) {
-					orderLine.put("requester", requester);
-				}
+				// add publisher and publicationDate
+                String publisher = marcUtils.getPublisher(record);
+                if (StringUtils.isNotEmpty(publisher)) {
+                    orderLine.put("publisher", publisher);
+                }
+                
+                if (twoSixtyFour != null) {
+                    String pubYear = marcUtils.getPublicationDate(twoSixtyFour);
+                    if (StringUtils.isNotEmpty(pubYear)) {                        
+                        orderLine.put("publicationDate", pubYear);
+                    }
+                }
 				
 				
 				// add fund distribution info
@@ -351,6 +359,20 @@ public class OrderImport {
 				funds.put(fundDist);
 				orderLine.put("fundDistribution", funds);
 				
+				// get requester
+                String requester = marcUtils.getRequester(nineEightyOne);
+                if (StringUtils.isNotEmpty(requester)) {
+                    orderLine.put("requester", requester);
+                    rushPO = true;
+                }
+
+                // if rushPO is ever set, prefix the poNumber with "RUSH"
+                if (rushPO) {
+                    order.put("poNumberPrefix", "RUSH");
+                    order.put("poNumber", "RUSH"+ poNumberObj.get("poNumber"));
+                } else {
+                    order.put("poNumber", poNumberObj.get("poNumber"));
+                }
 
 				orderLine.put("purchaseOrderId", orderUUID.toString());
 				poLines.put(orderLine);
@@ -391,7 +413,7 @@ public class OrderImport {
 			try {
 			     
 				JSONObject responseMessage = new JSONObject();
-				responseMessage.put("poNumber", poNumberObj.get("poNumber"));
+        responseMessage.put("poNumber", updatedPurchaseOrderJson.getString("poNumber"));
 				responseMessage.put("poUUID", orderUUID.toString());
 				
                 String poLineUUID = poLineObject.getString("id");
