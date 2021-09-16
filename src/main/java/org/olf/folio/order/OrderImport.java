@@ -68,7 +68,8 @@ public class OrderImport {
 		//String permELocationName = (String) getMyContext().getAttribute("permELocation");
 		String noteTypeName = (String) getMyContext().getAttribute("noteType");
 		String materialTypeName = (String) getMyContext().getAttribute("materialType");
-		String billTo = (String) getMyContext().getAttribute("billTo");
+		String billToDefault = (String) getMyContext().getAttribute("billToDefault");
+		String billToApprovals = (String) getMyContext().getAttribute("billToApprovals");
 		
 		JSONArray envErrors = validateEnvironment();
 		if (envErrors != null) {
@@ -146,7 +147,6 @@ public class OrderImport {
 		JSONObject poNumberObj = new JSONObject(poNumber);
 		logger.trace("NEXT PO NUMBER: " + poNumberObj.get("poNumber")); 
         // does this have to be a UUID object?
-		String billingUUID = this.billingMap.get(billTo);		
 		
 		// CREATING THE PURCHASE ORDER
 		JSONObject order = new JSONObject();
@@ -156,8 +156,6 @@ public class OrderImport {
 		order.put("id", orderUUID.toString());
 		order.put("approved", true);
 		order.put("workflowStatus", "Open");
-		order.put("billTo", billingUUID);
-		order.put("shipTo", billingUUID);
 		
 		JSONArray poLines = new JSONArray();
 		
@@ -213,6 +211,17 @@ public class OrderImport {
 				} catch (UnsupportedEncodingException e) {
 					logger.error(e.getMessage());
 				}
+
+        // Determine billTo/shipTo address
+        String recordSource = marcUtils.getRecordSource(record);
+        String billingUUID = new String();
+        if (recordSource.equals("appr")) {
+            billingUUID = this.billingMap.get(billToApprovals);
+        } else {
+            billingUUID = this.billingMap.get(billToDefault);
+        }
+        order.put("billTo", billingUUID);
+        order.put("shipTo", billingUUID);
 				
 				//LOOK UP THE FUND
 				//logger.debug("lookup Fund");
@@ -755,9 +764,9 @@ public class OrderImport {
             errMsg.put("error", "fiscalYearCode environment variable not found");
             errors.put(errMsg);
         }
-        if (StringUtils.isEmpty((String) getMyContext().getAttribute("billTo"))) {
+        if (StringUtils.isEmpty((String) getMyContext().getAttribute("billToDefault"))) {
             JSONObject errMsg = new JSONObject();
-            errMsg.put("error", "billTo environment variable not found");
+            errMsg.put("error", "billToDefault environment variable not found");
             errors.put(errMsg);
         }
         if (errors.isEmpty()) {
