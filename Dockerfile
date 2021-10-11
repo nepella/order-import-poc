@@ -6,8 +6,15 @@ RUN mvn dependency:go-offline -B
 COPY ./src ./src
 RUN mvn package -DskipTests=true
 
+COPY infra_entrypoint /infra_entrypoint
+RUN chmod 0555 /infra_entrypoint
+
 FROM jetty
 
 WORKDIR $JETTY_BASE
 
+COPY --from=maven /infra_entrypoint /infra_entrypoint
 COPY --from=maven target/order-import-poc-*.war ./webapps/order-import-poc.war
+
+ENTRYPOINT ["/infra_entrypoint"]
+CMD ["/docker-entrypoint.sh", "java", "-jar", "/usr/local/jetty/start.jar"]

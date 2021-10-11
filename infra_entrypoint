@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -eu
+shopt -s nocasematch
+
+while read -r var; do
+    file=${!var}
+    target_var=${var/%_var_file}
+    if ! secret=$(<"$file"); then
+        echo "Could not load variable ${target_var@Q} from ${file@Q}." >&2
+        exit 1
+    fi
+    export "${target_var}=$(<"$file")"
+done < <(env -0 | cut -z -d= -f1 -s | grep -zi '_var_file$' | tr '\00' '\n')
+
+exec "$@"
