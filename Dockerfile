@@ -18,3 +18,5 @@ COPY --from=maven target/order-import-poc-*.war ./webapps/order-import-poc.war
 
 ENTRYPOINT ["/infra_entrypoint"]
 CMD ["/docker-entrypoint.sh", "java", "-jar", "/usr/local/jetty/start.jar"]
+HEALTHCHECK --start-period=5s --interval=15s --timeout=5s \
+    CMD curl --fail http://localhost:8080/order-import-poc/import || exit 1
