@@ -28,8 +28,7 @@ public class MarcUtilsPriceTest extends MarcUtilsBaseTest {
         try {
             List<Record> records = getRecords(fname);
             for (Record record : records) {
-                DataField nineEightyOne = (DataField) record.getVariableField("981");
-                String price = marcUtils.getPrice(nineEightyOne);
+                String price = marcUtils.getPrice(record);
                 if (debug) {
                     System.out.println(fname + " - price: $" + price);
                 } else {

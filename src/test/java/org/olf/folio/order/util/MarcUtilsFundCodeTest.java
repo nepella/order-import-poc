@@ -19,9 +19,7 @@ public class MarcUtilsFundCodeTest extends MarcUtilsBaseTest {
         try {
             List<Record> records = getRecords(fname);
             for (Record record: records) {
-                DataField nineEighty = (DataField) record.getVariableField("980");
-                //System.out.println(nineEighty.toString());
-                String fundCode = marcUtils.getFundCode(nineEighty);
+                String fundCode = marcUtils.getFundCode(record);
 
                 if (debug) {
                     System.out.println(fname + " - fundCode: " + fundCode);

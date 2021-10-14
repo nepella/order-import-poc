@@ -19,9 +19,7 @@ public class MarcUtilsCurrencyTest extends MarcUtilsBaseTest {
         try {
             List<Record> records = getRecords(fname);
             for (Record record : records) {
-                DataField nineEightyOne = (DataField) record.getVariableField("981");
-                // System.out.println(nineEightyOne.toString());
-                String currency = marcUtils.getCurrency(nineEightyOne);
+                String currency = marcUtils.getCurrency(record);
                 if (debug) {
                     System.out.println(fname + " - currency: " + currency);
                 } else {

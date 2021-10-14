@@ -19,8 +19,7 @@ public class MarcUtilsTitleTest extends MarcUtilsBaseTest {
         try {
             List<Record> records = getRecords(fname);
             for (Record record: records) {
-                DataField twoFourFive = (DataField) record.getVariableField("245");
-                String title = marcUtils.getTitle(twoFourFive);
+                String title = marcUtils.getTitle(record);
                 if (debug) {
                     System.out.println(fname + " - title: " + title);
                 } else {

@@ -22,8 +22,7 @@ public class MarcUtilsReceivingNoteTest extends MarcUtilsBaseTest {
         try {
             List<Record> records = getRecords(fname);
             for (Record record: records) {
-                DataField nineEightyOne = (DataField) record.getVariableField("981");
-                String notes = marcUtils.getReceivingNote(nineEightyOne);
+                String notes = marcUtils.getReceivingNote(record);
                 if (debug) {
                     System.out.println(fname + " - notes: " + notes);
                 } else {

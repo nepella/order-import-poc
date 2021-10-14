@@ -19,8 +19,7 @@ public class MarcUtilsRushTest extends MarcUtilsBaseTest {
         try {
             List<Record> records = getRecords(fname);
             for (Record record: records) {
-                DataField nineEightyOne = (DataField) record.getVariableField("981");
-                String rush = marcUtils.getRush(nineEightyOne);
+                String rush = marcUtils.getRush(record);
                 if (debug) {
                     System.out.println(fname + " - rush: " + rush);
                 } else {

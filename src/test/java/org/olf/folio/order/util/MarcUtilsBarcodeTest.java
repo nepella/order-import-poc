@@ -28,8 +28,7 @@ public class MarcUtilsBarcodeTest extends MarcUtilsBaseTest {
             for (String fname: myFnames) {
                 List<Record> records = getRecords(fname);
                 for (Record record: records) {
-                    DataField df = (DataField) record.getVariableField("976");
-                    String barcode = marcUtils.getBarcode(df);
+                    String barcode = marcUtils.getBarcode(record);
                     if (debug) {
                         System.out.println(fname + " - barcode: " + barcode);
                     } else {

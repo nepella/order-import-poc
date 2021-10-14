@@ -18,8 +18,7 @@ public class MarcUtilsRequesterTest extends MarcUtilsBaseTest {
         try {
             List<Record> records = getRecords(fname);
             for (Record record: records) {
-                DataField nineEightyOne = (DataField) record.getVariableField("981");
-                String requester = marcUtils.getRequester(nineEightyOne);
+                String requester = marcUtils.getRequester(record);
                 if (debug) {
                     System.out.println(fname + " - requester: " + requester);
                 } else {

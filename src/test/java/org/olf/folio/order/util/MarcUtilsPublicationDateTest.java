@@ -22,8 +22,7 @@ public class MarcUtilsPublicationDateTest extends MarcUtilsBaseTest {
             for (String fname: this.fnames) {
                 List<Record> records = getRecords(fname);
                 for (Record record: records) {
-                    DataField df = (DataField) record.getVariableField("264");
-                    String pubDate = marcUtils.getPublicationDate(df);
+                    String pubDate = marcUtils.getPublicationDate(record);
                     if (debug) {
                         System.out.println(fname + " - pubDate: " + pubDate);
                     } else {

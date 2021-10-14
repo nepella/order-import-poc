@@ -19,8 +19,7 @@ public class MarcUtilsSelectorTest extends MarcUtilsBaseTest {
         try {
             List<Record> records = getRecords(fname);
             for (Record record: records) {
-                DataField nineEighty = (DataField) record.getVariableField("980");
-                String selector = marcUtils.getSelector(nineEighty);
+                String selector = marcUtils.getSelector(record);
                 if (debug) {
                     System.out.println(fname + " - selector: " + selector);
                 } else {

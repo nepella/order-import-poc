@@ -24,62 +24,81 @@ import org.marc4j.marc.VariableField;
 
 public class MarcUtils {
 
-    private final String TITLE = "a";  // 245$a
-    private final String TITLE2 = "b"; // 245$b
-    private final String TITLE3 = "c"; // 245$c
+    private final String TITLE_FIELD = "245";
+    private final String TITLE_FIELD_TITLE1_SUBFIELD = "a";
+    private final String TITLE_FIELD_TITLE2_SUBFIELD = "b";
+    private final String TITLE_FIELD_TITLE3_SUBFIELD = "c";
 
-    private final String PRICE = "i"; // 981$i
-    private final String CURRENCY = "k"; // 981$k
-    private final String RUSH = "q"; // 981$q
+    private final String PRICE_FIELD = "981";
+    private final String PRICE_SUBFIELD = "i";
+    private final String CURRENCY_FIELD = "981";
+    private final String CURRENCY_SUBFIELD = "k";
+    private final String RUSH_FIELD = "981";
+    private final String RUSH_SUBFIELD = "q";
 
-    private final String QUANTITY = "g"; // 980$g
-    private final String FUNDCODE = "h"; // 980$h
-    private final String VENDOR = "v"; // 980$v
-    private final String VENDORID = "i"; // 961$i...formerly 980$c
+    private final String QUANTITY_FIELD = "980";
+    private final String QUANTITY_SUBFIELD = "g";
+    private final String FUNDCODE_FIELD = "980";
+    private final String FUNDCODE_SUBFIELD = "h";
+    private final String VENDOR_FIELD = "980";
+    private final String VENDOR_SUBFIELD = "v";
+    private final String VENDORID_FIELD = "961";
+    private final String VENDORID_SUBFIELD = "i";
 
-    //private final String NOTE = "n"; // 980$n
-    private final String INTERNAL_NOTE = "z"; // 980$z
-    private final String RECEIVING_NOTE = "n"; // 981$n
+    private final String INTERNAL_NOTES_FIELD = "980";
+    private final String INTERNAL_NOTES_SUBFIELD = "z";
+    private final String RECEIVING_NOTE_FIELD = "981";
+    private final String RECEIVING_NOTE_SUBFIELD = "n";
 
-    private final String PERSONNAME = "s"; // 980$s
-    private final String ELECTRONIC = "z"; // 980$z
-    private final String SELECTOR = "y"; // 980$y Selector
+    private final String ELECTRONIC_FIELD = "980";
+    private final String ELECTRONIC_SUBFIELD = "z";
+    private final String SELECTOR_FIELD = "980";
+    private final String SELECTOR_SUBFIELD = "y";
 
-    private final String LOCATION = "b"; // 952$b
-    private final String REQUESTER = "r"; // 981$r
+    private final String LOCATION_FIELD = "952";
+    private final String LOCATION_SUBFIELD = "b";
+    private final String REQUESTER_FIELD = "981";
+    private final String REQUESTER_SUBFIELD = "r";
 
-    private final String PUBLISHER = "b"; // 264$b
-    private final String PUBLISHER_LOCATION = "a"; // 264$a
-    private final String PUBLICATION_DATE = "c"; // 264$c
+    private final String PUBLISHER_FIELD = "264";
+    private final String PUBLISHER_SUBFIELD = "b";
+    private final String PUBLISHER_LOCATION_FIELD = "264";
+    private final String PUBLISHER_LOCATION_SUBFIELD = "a";
+    private final String PUBLICATION_DATE_FIELD = "264";
+    private final String PUBLICATION_DATE_SUBFIELD = "c";
 
-    private final String BARCODE = "p"; // 976$p
-    private final String RECORD_SOURCE = "h"; // 948$h
+    private final String BARCODE_FIELD = "976";
+    private final String BARCODE_SUBFIELD = "p";
+    private final String RECORD_SOURCE_FIELD = "948";
+    private final String RECORD_SOURCE_SUBFIELD = "h";
 
     public MarcUtils() {
         // TODO Auto-generated constructor stub
     }
 
-    public String getTitle(DataField twoFourFive) {
+    public String getTitle(Record record) {
         String title = new String();
-        if (twoFourFive != null) {
-            title = twoFourFive.getSubfieldsAsString(TITLE);
-            String titleTwo = twoFourFive.getSubfieldsAsString(TITLE2);
-            String titleThree = twoFourFive.getSubfieldsAsString(TITLE3);
-            if (titleTwo != null) title += " " + titleTwo;
-            if (titleThree != null) title += " " + titleThree;
+        DataField field = (DataField) record.getVariableField(TITLE_FIELD);
+        if (field != null) {
+            title = field.getSubfieldsAsString(TITLE_FIELD_TITLE1_SUBFIELD);
+            String title2 =
+                field.getSubfieldsAsString(TITLE_FIELD_TITLE2_SUBFIELD);
+            String title3 =
+                field.getSubfieldsAsString(TITLE_FIELD_TITLE3_SUBFIELD);
+            if (title2 != null) title += " " + title2;
+            if (title3 != null) title += " " + title3;
         }
         return title;
     }
 
     /**
      * getPrice from marc, defalt to 0.00.
-     * @param nineEightyOne
-     * @return
      */
-    public String getPrice(DataField nineEightyOne) {
+    public String getPrice(Record record) {
         String price = new String();
-        if (nineEightyOne != null) {
-            price = nineEightyOne.getSubfieldsAsString(PRICE);
+        DataField field = (DataField) record.getVariableField(PRICE_FIELD);
+        if (field != null) {
+            price = field.getSubfieldsAsString(PRICE_SUBFIELD);
             if (price == null) {
                 price = "0.00";
             } else  {
@@ -91,112 +110,112 @@ public class MarcUtils {
         return price;
     }
 
-    public String getQuantity(DataField nineEighty ) {
-        String quantity = new String();
-        if (nineEighty != null) {
-            quantity =  nineEighty.getSubfieldsAsString(QUANTITY);
+    public String getQuantity(Record record) {
+        DataField field = (DataField) record.getVariableField(QUANTITY_FIELD);
+        if (field != null) {
+            return field.getSubfieldsAsString(QUANTITY_SUBFIELD);
+        } else {
+            return new String();
         }
-        return quantity;
     }
 
-    public String getFundCode(DataField nineEighty ) {
-        String fundCode = new String();
-        if (nineEighty != null) {
-            fundCode = nineEighty.getSubfieldsAsString(FUNDCODE);
+    public String getFundCode(Record record) {
+        DataField field = (DataField) record.getVariableField(FUNDCODE_FIELD);
+        if (field != null) {
+            return field.getSubfieldsAsString(FUNDCODE_SUBFIELD);
+        } else {
+            return new String();
         }
-        return fundCode;
     }
 
-    public String getVendorCode(DataField nineEighty ) {
-        String vendorCode = new String();
-        if (nineEighty != null) {
-            vendorCode = nineEighty.getSubfieldsAsString(VENDOR);
+    public String getVendorCode(Record record) {
+        DataField field = (DataField) record.getVariableField(VENDOR_FIELD);
+        if (field != null) {
+            return field.getSubfieldsAsString(VENDOR_SUBFIELD);
+        } else {
+            return new String();
         }
-        return vendorCode;
     }
 
-    public String getVendorItemId(DataField nineSixtyOne ) {
-        String vendorItemId= new String();
-        if (nineSixtyOne != null) {
-            vendorItemId = nineSixtyOne.getSubfieldsAsString(VENDORID);
+    public String getVendorItemId(Record record) {
+        DataField field = (DataField) record.getVariableField(VENDORID_FIELD);
+        if (field != null) {
+            return field.getSubfieldsAsString(VENDORID_SUBFIELD);
         } else {
             return null;
         }
-        return vendorItemId;
     }
 
-    public String getLocation(DataField nineFiveTwo ) {
-        String location = new String();
-        if (nineFiveTwo != null) {
-           location = nineFiveTwo.getSubfieldsAsString(LOCATION);
+    public String getLocation(Record record) {
+        DataField field = (DataField) record.getVariableField(LOCATION_FIELD);
+        if (field != null) {
+            return field.getSubfieldsAsString(LOCATION_SUBFIELD);
         } else {
-            location = "olin";
+            return "olin";
         }
-        return location;
     }
 
-    public String getRequester(DataField nineEightyOne ) {
-        String requester = new String();
-        if (nineEightyOne != null) {
-            requester = nineEightyOne.getSubfieldsAsString(REQUESTER);
+    public String getRequester(Record record) {
+        DataField field = (DataField) record.getVariableField(REQUESTER_FIELD);
+        if (field != null) {
+            return field.getSubfieldsAsString(REQUESTER_SUBFIELD);
+        } else {
+            return new String();
         }
-        return requester;
     }
 
-    public String getCurrency(DataField nineEightyOne ) {
-        String currency = new String();
-        if (nineEightyOne != null) {
-            currency = nineEightyOne.getSubfieldsAsString(CURRENCY);
+    public String getCurrency(Record record) {
+        DataField field = (DataField) record.getVariableField(CURRENCY_FIELD);
+        if (field != null) {
+            return field.getSubfieldsAsString(CURRENCY_SUBFIELD);
+        } else {
+            return new String();
         }
-        return currency;
     }
 
-    public String getRush(DataField nineEightyOne ) {
-        String rush = new String();
-        if (nineEightyOne != null) {
-            rush = nineEightyOne.getSubfieldsAsString(RUSH);
+    public String getRush(Record record) {
+        DataField field = (DataField) record.getVariableField(RUSH_FIELD);
+        if (field != null) {
+            return field.getSubfieldsAsString(RUSH_SUBFIELD);
+        } else {
+            return new String();
         }
-        return rush;
     }
 
-    public String getInternalNotes(DataField nineEighty ) {
-        String notes = new String();
-        if (nineEighty != null) {
-            notes =  nineEighty.getSubfieldsAsString(INTERNAL_NOTE);
-        }
-        return notes;
+    public String getInternalNotes(Record record) {
+        DataField field =
+            (DataField) record.getVariableField(INTERNAL_NOTES_FIELD);
+        if (field != null) {
+            return field.getSubfieldsAsString(INTERNAL_NOTES_SUBFIELD);
+        };
+        return null;
     }
 
-    public String getReceivingNote(DataField nineEightyOne ) {
-        String notes = new String();
-        if (nineEightyOne != null) {
-            notes =  nineEightyOne.getSubfieldsAsString(RECEIVING_NOTE);
+    public String getReceivingNote(Record record) {
+        DataField field =
+            (DataField) record.getVariableField(RECEIVING_NOTE_FIELD);
+        if (field != null) {
+            return field.getSubfieldsAsString(RECEIVING_NOTE_SUBFIELD);
+        } else {
+            return new String();
         }
-        return notes;
     }
 
-    public String getSelector(DataField nineEighty ) {
-        String email = new String();
-        if (nineEighty != null) {
-            email = nineEighty.getSubfieldsAsString(SELECTOR);
+    public String getSelector(Record record) {
+        DataField field = (DataField) record.getVariableField(SELECTOR_FIELD);
+        if (field != null) {
+            return field.getSubfieldsAsString(SELECTOR_SUBFIELD);
+        } else {
+            return new String();
         }
-        return email;
     }
 
-    public String getPersonName(DataField nineEighty ) {
-        String personName = new String();
-        if (nineEighty != null) {
-            personName = nineEighty.getSubfieldsAsString(PERSONNAME);
+    public String getElectronicIndicator(Record record) {
+        DataField field = (DataField) record.getVariableField(ELECTRONIC_FIELD);
+        if (field != null) {
+            return field.getSubfieldsAsString(ELECTRONIC_SUBFIELD);
         }
-        return personName;
-    }
-
-    public String getElectronicIndicator(DataField nineEighty ) {
-        String electronicIndicator = new String();
-        if (nineEighty != null) {
-            electronicIndicator = nineEighty.getSubfieldsAsString(ELECTRONIC);
-        }
-        return electronicIndicator;
+        return new String();
     }
 
     public String getPublisher(Record record) {
@@ -206,13 +225,13 @@ public class MarcUtils {
 
         for (DataField df: fields) {
             char id2 = df.getIndicator2();
-            if (df.getTag().equals("264") && id2 == '1' ) {
+            if (df.getTag().equals(PUBLISHER_FIELD) && id2 == '1' ) {
                 datafields.add(df);
             }
         }
         if (datafields.size() > 0 ) {
             DataField twoSixtyFour = datafields.get(0);
-            List<Subfield> subfields = twoSixtyFour.getSubfields(PUBLISHER);
+            List<Subfield> subfields = twoSixtyFour.getSubfields(PUBLISHER_SUBFIELD);
 
             for (Subfield sf: subfields) {
                 publisher += sf.getData() + " ";
@@ -223,26 +242,22 @@ public class MarcUtils {
         return StringUtils.removeEnd(publisher.trim(), ",").trim();
     }
 
-    public String getPublicationDate(DataField twoSixtyFour ) {
-        String publicationDate = new String();
-        if (twoSixtyFour != null) {
-            publicationDate = twoSixtyFour.getSubfieldsAsString(PUBLICATION_DATE);
-
+    public String getPublicationDate(Record record) {
+        DataField field = (DataField) record.getVariableField(PUBLICATION_DATE_FIELD);
+        if (field != null) {
+            return matchYear(field.getSubfieldsAsString(PUBLICATION_DATE_SUBFIELD));
         } else {
             return null;
         }
-        return matchYear(publicationDate);
     }
 
-    public String getBarcode(DataField df ) {
-        // expecting a 976 field
-        String barcode = new String();
-        if (df != null) {
-            barcode = df.getSubfieldsAsString(BARCODE);
+    public String getBarcode(Record record) {
+        DataField field = (DataField) record.getVariableField(BARCODE_FIELD);
+        if (field != null) {
+            return field.getSubfieldsAsString(BARCODE_SUBFIELD).trim();
         } else {
             return null;
         }
-        return barcode.trim();
     }
 
     public String getRecordSource(Record record) {
@@ -254,8 +269,8 @@ public class MarcUtils {
             char id1 = df.getIndicator1();
             char id2 = df.getIndicator2();
 
-            if (df.getTag().equals("948") && id1 == '0' && id2 == ' ' ) {
-                recordSource = df.getSubfieldsAsString(RECORD_SOURCE);
+            if (df.getTag().equals(RECORD_SOURCE_FIELD) && id1 == '0' && id2 == ' ' ) {
+                recordSource = df.getSubfieldsAsString(RECORD_SOURCE_SUBFIELD);
                 return recordSource;
             }
         }
@@ -468,13 +483,13 @@ public class MarcUtils {
     }
 
     private void trimBarcode(Record record) {
-      DataField nineSevenSix = (DataField) record.getVariableField("976");
-      String barcode = getBarcode(nineSevenSix);
+      DataField nineSevenSix = (DataField) record.getVariableField(BARCODE_FIELD);
+      String barcode = getBarcode(record);
 
       // Trim spaces from barcode (976$p)
       if (barcode != null) {
         // Remove existing subfield
-        Character barcodeCode = BARCODE.charAt(0);
+        Character barcodeCode = BARCODE_SUBFIELD.charAt(0);
         Subfield originalBarcode = nineSevenSix.getSubfield(barcodeCode);
         nineSevenSix.removeSubfield(originalBarcode);
 

@@ -22,8 +22,7 @@ public class MarcUtilsLocationTest extends MarcUtilsBaseTest {
         try {
             List<Record> records = getRecords(fname);
             for (Record record : records) {
-                DataField nineFiveTwo = (DataField) record.getVariableField("952");
-                String location = marcUtils.getLocation(nineFiveTwo);
+                String location = marcUtils.getLocation(record);
                 if (debug) {
                     System.out.println(fname + " - location: " + location);
                 } else {

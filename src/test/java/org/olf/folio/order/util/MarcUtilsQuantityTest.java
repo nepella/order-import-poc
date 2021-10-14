@@ -18,8 +18,7 @@ public class MarcUtilsQuantityTest extends MarcUtilsBaseTest {
         try {
             List<Record> records = getRecords(fname);
             for (Record record: records) {
-                DataField nineEighty = (DataField) record.getVariableField("980");
-                String quantity = marcUtils.getQuantity(nineEighty);
+                String quantity = marcUtils.getQuantity(record);
                 if (debug) {
                     System.out.println(fname + " - quantity: " + quantity);
                 } else {

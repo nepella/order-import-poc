@@ -24,8 +24,7 @@ public class MarcUtilsVendorTest extends MarcUtilsBaseTest {
         try {
             List<Record> records = getRecords(fname);
             for (Record record : records) {
-                DataField nineEighty = (DataField) record.getVariableField("980");
-                String vendor = marcUtils.getVendorCode(nineEighty);
+                String vendor = marcUtils.getVendorCode(record);
                 if (debug) {
                     System.out.println(fname + " - vendor: " + vendor);
                 } else {

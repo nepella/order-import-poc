@@ -327,35 +327,24 @@ public class MarcToJson {
                 //}
                 JSONObject responseMessage = new JSONObject();
 
-                DataField twoFourFive = (DataField) record.getVariableField("245");
-                DataField nineEighty = (DataField) record.getVariableField("980");
-                DataField nineEightyOne = (DataField) record.getVariableField("981");
-                DataField nineSixtyOne = (DataField) record.getVariableField("961");
-                DataField twoSixtyFour = (DataField) record.getVariableField("264");
-
-                String title = marcUtils.getTitle(twoFourFive);
+                String title = marcUtils.getTitle(record);
                 if (isDebug()) {
                     System.out.println("Title: "+ title);
                 }
 
-                final String fundCode = marcUtils.getFundCode(nineEighty);
-                final String vendorCode =  marcUtils.getVendorCode(nineEighty);
+                final String fundCode = marcUtils.getFundCode(record);
+                final String vendorCode = marcUtils.getVendorCode(record);
 
-                String quantity =  marcUtils.getQuantity(nineEighty);
-                Integer quantityNo = 0; //INIT
-                if (quantity != null)  {
+                String quantity = marcUtils.getQuantity(record);
+                Integer quantityNo = 0;
+                if (quantity != null) {
                     quantityNo = Integer.valueOf(quantity);
                 }
 
-                String price = marcUtils.getPrice(nineEightyOne);
-                final String vendorItemId = marcUtils.getVendorItemId(nineSixtyOne);
+                String price = marcUtils.getPrice(record);
+                final String vendorItemId = marcUtils.getVendorItemId(record);
 
-                //String personName = marcUtils.getPersonName(nineEighty);
-
-                DataField nineFiveTwo = (DataField) record.getVariableField("952");
-                String locationName = marcUtils.getLocation(nineFiveTwo);
-                //responseMessage.put("location", locationName + " (" + lookupTable.get(locationName + "-location") + ")");
-
+                String locationName = marcUtils.getLocation(record);
 
                 //LOOK UP VENDOR
                 if (isDebug()) {
@@ -432,15 +421,14 @@ public class MarcToJson {
                 orderLine.put("acquisitionMethod", "Purchase");
 
                 // get the "internal note", which apparently will be used as a description
-                String internalNotes =  marcUtils.getInternalNotes(nineEighty);
+                String internalNotes =  marcUtils.getInternalNotes(record);
                 if (StringUtils.isNotEmpty(internalNotes)) {
                     orderLine.put("description", internalNotes);
                 }
 
                 // add a detailsObject if a receiving note or ISBN identifiers are found
                 JSONObject detailsObject = new JSONObject();
-                // get the "receiving note"
-                String receivingNote =  marcUtils.getReceivingNote(nineEightyOne);
+                String receivingNote = marcUtils.getReceivingNote(record);
                 if (StringUtils.isNotEmpty(receivingNote)) {
                     detailsObject.put("receivingNote", receivingNote);
                 }
@@ -489,20 +477,16 @@ public class MarcToJson {
                     logger.debug(contribArray.toString(3));
                 }
 
-                // get rush value
-                String rush = marcUtils.getRush(nineEightyOne);
+                String rush = marcUtils.getRush(record);
                 // TODO: check if match rush value to Rush:yes before adding to orderLine
                 if (StringUtils.isNotEmpty(rush) && StringUtils.contains(rush.toLowerCase(), "rush:yes")) {
                     orderLine.put("rush", true);
                 }
 
-                // get selector
-                String selector = marcUtils.getSelector(nineEighty);
+                String selector = marcUtils.getSelector(record);
                 if (StringUtils.isNotEmpty(selector)) {
                     orderLine.put("selector", selector);
                 }
-
-
 
                 // add publisher and publicationDate
                 String publisher = marcUtils.getPublisher(record);
@@ -510,11 +494,9 @@ public class MarcToJson {
                     orderLine.put("publisher", publisher);
                 }
 
-                if (twoSixtyFour != null) {
-                    String pubYear = marcUtils.getPublicationDate(twoSixtyFour);
-                    if (StringUtils.isNotEmpty(pubYear)) {
-                        orderLine.put("publicationDate", pubYear);
-                    }
+                String pubYear = marcUtils.getPublicationDate(record);
+                if (StringUtils.isNotEmpty(pubYear)) {
+                    orderLine.put("publicationDate", pubYear);
                 }
 
                 JSONObject fundsObject = new JSONObject(fundResponse);
@@ -527,8 +509,7 @@ public class MarcToJson {
                 funds.put(fundDist);
                 orderLine.put("fundDistribution", funds);
 
-                // get requester
-                String requester = marcUtils.getRequester(nineEightyOne);
+                String requester = marcUtils.getRequester(record);
                 if (StringUtils.isNotEmpty(requester)) {
                     orderLine.put("requester", requester);
                     rushPO = true;

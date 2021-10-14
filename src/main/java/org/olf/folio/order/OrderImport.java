@@ -172,26 +172,18 @@ public class OrderImport {
                 Record record = reader.next();
                 //logger.debug(record.toString());
 
-                DataField twoFourFive = (DataField) record.getVariableField("245");
-                DataField nineEighty = (DataField) record.getVariableField("980");
-                DataField nineFiveTwo = (DataField) record.getVariableField("952");
-                DataField nineEightyOne = (DataField) record.getVariableField("981");
-                DataField nineSixtyOne = (DataField) record.getVariableField("961");
-                DataField twoSixtyFour = (DataField) record.getVariableField("264");
-
-                String title = marcUtils.getTitle(twoFourFive);
-                String fundCode = marcUtils.getFundCode(nineEighty);
+                String title = marcUtils.getTitle(record);
+                String fundCode = marcUtils.getFundCode(record);
                 // vendor code instantiated outside of loop because it will be the same for all orderLines and added to response later
-                vendorCode =  marcUtils.getVendorCode(nineEighty);
+                vendorCode = marcUtils.getVendorCode(record);
 
-                String quantity =  marcUtils.getQuantity(nineEighty);
-                Integer quantityNo = 0; //INIT
+                String quantity =  marcUtils.getQuantity(record);
+                Integer quantityNo = 0;
                 if (quantity != null)  quantityNo = Integer.valueOf(quantity);
 
-                String price = marcUtils.getPrice(nineEightyOne);
-                String vendorItemId = marcUtils.getVendorItemId(nineSixtyOne);
-                String locationName = marcUtils.getLocation(nineFiveTwo);
-
+                String price = marcUtils.getPrice(record);
+                String vendorItemId = marcUtils.getVendorItemId(record);
+                String locationName = marcUtils.getLocation(record);
 
                 // LOOK UP THE ORGANIZATION (vendor) again!
                 // TODO: Refactor validateRequiredValues() to store org & fund IDs and avoid redundant HTTP requests
@@ -280,7 +272,7 @@ public class OrderImport {
                 orderLine.put("acquisitionMethod", "Purchase");
 
                 // get the "internal note", which apparently will be used as a description
-                String internalNotes =  marcUtils.getInternalNotes(nineEighty);
+                String internalNotes =  marcUtils.getInternalNotes(record);
                 if (StringUtils.isNotEmpty(internalNotes)) {
                     orderLine.put("description", internalNotes);
                 }
@@ -312,8 +304,7 @@ public class OrderImport {
                     detailsObject.put("productIds", productIds);
                 }
 
-                // get the "receiving note"
-                String receivingNote =  marcUtils.getReceivingNote(nineEightyOne);
+                String receivingNote = marcUtils.getReceivingNote(record);
                 if (StringUtils.isNotEmpty(receivingNote)) {
                     detailsObject.put("receivingNote", receivingNote);
                 }
@@ -340,15 +331,13 @@ public class OrderImport {
                     logger.debug(contribArray.toString(3));
                 }
 
-                // get rush value
-                String rush = marcUtils.getRush(nineEightyOne);
+                String rush = marcUtils.getRush(record);
                 // TODO: check if match rush value to ;Rush:yes before adding to orderLine
                 if (StringUtils.isNotEmpty(rush) && StringUtils.contains(rush.toLowerCase(), "rush:yes")) {
                     orderLine.put("rush", true);
                 }
 
-                // get selector
-                String selector = marcUtils.getSelector(nineEighty);
+                String selector = marcUtils.getSelector(record);
                 if (StringUtils.isNotEmpty(selector)) {
                     orderLine.put("selector", selector);
                 }
@@ -359,13 +348,10 @@ public class OrderImport {
                     orderLine.put("publisher", publisher);
                 }
 
-                if (twoSixtyFour != null) {
-                    String pubYear = marcUtils.getPublicationDate(twoSixtyFour);
-                    if (StringUtils.isNotEmpty(pubYear)) {
-                        orderLine.put("publicationDate", pubYear);
-                    }
+                String pubYear = marcUtils.getPublicationDate(record);
+                if (StringUtils.isNotEmpty(pubYear)) {
+                    orderLine.put("publicationDate", pubYear);
                 }
-
 
                 // add fund distribution info
                 JSONArray funds = new JSONArray();
@@ -377,8 +363,7 @@ public class OrderImport {
                 funds.put(fundDist);
                 orderLine.put("fundDistribution", funds);
 
-                // get requester
-                String requester = marcUtils.getRequester(nineEightyOne);
+                String requester = marcUtils.getRequester(record);
                 if (StringUtils.isNotEmpty(requester)) {
                     orderLine.put("requester", requester);
                     rushPO = true;
@@ -515,9 +500,7 @@ public class OrderImport {
                     copycatImportObject.put("profileId", Constants.COPYCAT_DEFAULT_PROFILE);
                     copycatImportObject.put("record", marcJsonObject);
 
-                    // get barcode from 976$p, if it exists, switch to shelf-ready mod-copycat profile
-                    DataField nineSevenSix = (DataField) record.getVariableField("976");
-                    String barcode = marcUtils.getBarcode(nineSevenSix);
+                    String barcode = marcUtils.getBarcode(record);
                     if (StringUtils.isNotEmpty(barcode)) {
                         copycatImportObject.put("profileId", Constants.COPYCAT_SHELFREADY_PROFILE);
                     }
@@ -562,10 +545,9 @@ public class OrderImport {
                 //GET THE 980, 981, 245, and 952 fields FROM THE MARC RECORD
                 DataField nineEighty = (DataField) record.getVariableField("980");
                 DataField nineEightyOne = (DataField) record.getVariableField("981");
-                DataField twoFourFive = (DataField) record.getVariableField("245");
                 DataField nineFiveTwo = (DataField) record.getVariableField("952");
 
-                if (twoFourFive == null) {
+                if (record.getVariableField("245") == null) {
                     JSONObject errorMessage = new JSONObject();
                     errorMessage.put("error", "Record is missing the 245 field");
                     errorMessage.put("PONumber", "~error~");
@@ -574,7 +556,7 @@ public class OrderImport {
                     continue;
                 }
 
-                String title = marcUtils.getTitle(twoFourFive);
+                String title = marcUtils.getTitle(record);
 
                 if (nineEighty == null) {
                     JSONObject errorMessage = new JSONObject();
@@ -586,10 +568,10 @@ public class OrderImport {
                 }
 
 
-                String fundCode = marcUtils.getFundCode(nineEighty);
-                String vendorCode =  marcUtils.getVendorCode(nineEighty);
+                String fundCode = marcUtils.getFundCode(record);
+                String vendorCode = marcUtils.getVendorCode(record);
 
-                String quantity =  marcUtils.getQuantity(nineEighty);
+                String quantity =  marcUtils.getQuantity(record);
                 Integer quantityNo = 0;
                 if (quantity != null)  quantityNo = Integer.valueOf(quantity);
 

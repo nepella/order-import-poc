@@ -18,8 +18,7 @@ public class MarcUtilsElectronicTest extends MarcUtilsBaseTest {
         try {
             List<Record> records = getRecords(fname);
             for (Record record: records) {
-                DataField nineEighty = (DataField) record.getVariableField("980");
-                String electronic = marcUtils.getElectronicIndicator(nineEighty);
+                String electronic = marcUtils.getElectronicIndicator(record);
 
                 if (debug) {
                     System.out.println(fname + " - electronic: " + electronic);

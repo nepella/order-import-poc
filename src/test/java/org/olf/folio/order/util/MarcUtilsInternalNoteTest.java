@@ -22,8 +22,7 @@ public class MarcUtilsInternalNoteTest extends MarcUtilsBaseTest {
         try {
             List<Record> records = getRecords(fname);
             for (Record record: records) {
-                DataField nineEightyOne = (DataField) record.getVariableField("981");
-                String notes = marcUtils.getInternalNotes(nineEightyOne);
+                String notes = marcUtils.getInternalNotes(record);
                 if (debug) {
                     System.out.println(fname + " - notes: " + notes);
                 } else {
