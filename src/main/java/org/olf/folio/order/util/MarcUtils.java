@@ -30,47 +30,63 @@ public class MarcUtils {
     private final String TITLE_FIELD_TITLE3_SUBFIELD = "c";
 
     private final String PRICE_FIELD = "981";
-    private final String PRICE_SUBFIELD = "i";
-    private final String CURRENCY_FIELD = "981";
-    private final String CURRENCY_SUBFIELD = "k";
-    private final String RUSH_FIELD = "981";
-    private final String RUSH_SUBFIELD = "q";
+    private final String PRICE_SUBFIELD = "e";
+
+    private final String CURRENCY_FIELD = null;
+    private final String CURRENCY_SUBFIELD = null;
+
+    private final String RUSH_FIELD = null;
+    private final String RUSH_SUBFIELD = null;
 
     private final String QUANTITY_FIELD = "980";
     private final String QUANTITY_SUBFIELD = "g";
-    private final String FUNDCODE_FIELD = "980";
-    private final String FUNDCODE_SUBFIELD = "h";
-    private final String VENDOR_FIELD = "980";
-    private final String VENDOR_SUBFIELD = "v";
-    private final String VENDORID_FIELD = "961";
-    private final String VENDORID_SUBFIELD = "i";
 
-    private final String INTERNAL_NOTES_FIELD = "980";
-    private final String INTERNAL_NOTES_SUBFIELD = "z";
-    private final String RECEIVING_NOTE_FIELD = "981";
-    private final String RECEIVING_NOTE_SUBFIELD = "n";
+    private final String FUNDCODE_FIELD = "981";
+    private final String FUNDCODE_SUBFIELD = "a";
+    private final String FUNDCODE_FIXED_VALUE = null;
 
-    private final String ELECTRONIC_FIELD = "980";
-    private final String ELECTRONIC_SUBFIELD = "z";
-    private final String SELECTOR_FIELD = "980";
-    private final String SELECTOR_SUBFIELD = "y";
+    private final String VENDOR_FIELD = null;
+    private final String VENDOR_SUBFIELD = null;
+    private final String VENDOR_FIXED_VALUE = "undefined";
 
-    private final String LOCATION_FIELD = "952";
-    private final String LOCATION_SUBFIELD = "b";
-    private final String REQUESTER_FIELD = "981";
-    private final String REQUESTER_SUBFIELD = "r";
+    // FIXME: I don't know what this is.
+    private final String VENDORID_FIELD = null;
+    private final String VENDORID_SUBFIELD = null;
+
+    private final String INTERNAL_NOTES_FIELD = null;
+    private final String INTERNAL_NOTES_SUBFIELD = null;
+
+    private final String RECEIVING_NOTE_FIELD = null;
+    private final String RECEIVING_NOTE_SUBFIELD = null;
+
+    private final String ELECTRONIC_FIELD = null;
+    private final String ELECTRONIC_SUBFIELD = null;
+    private final String SELECTOR_FIELD = null;
+    private final String SELECTOR_SUBFIELD = null;
+
+    private final String LOCATION_FIELD = null;
+    private final String LOCATION_SUBFIELD = null;
+    private final String LOCATION_FIXED_VALUE = "mnmn";
+
+    private final String REQUESTER_FIELD = null;
+    private final String REQUESTER_SUBFIELD = null;
 
     private final String PUBLISHER_FIELD = "264";
     private final String PUBLISHER_SUBFIELD = "b";
+
     private final String PUBLISHER_LOCATION_FIELD = "264";
     private final String PUBLISHER_LOCATION_SUBFIELD = "a";
+
     private final String PUBLICATION_DATE_FIELD = "264";
     private final String PUBLICATION_DATE_SUBFIELD = "c";
 
-    private final String BARCODE_FIELD = "976";
-    private final String BARCODE_SUBFIELD = "p";
-    private final String RECORD_SOURCE_FIELD = "948";
-    private final String RECORD_SOURCE_SUBFIELD = "h";
+    private final String BARCODE_FIELD = null;
+    private final String BARCODE_SUBFIELD = null;
+
+    private final String RECORD_SOURCE_FIELD = null;
+    private final String RECORD_SOURCE_SUBFIELD = null;
+    // FIXME
+    private final String RECORD_SOURCE_FIXED_VALUE = "appr";
 
     public MarcUtils() {
         // TODO Auto-generated constructor stub
@@ -120,6 +136,12 @@ public class MarcUtils {
     }
 
     public String getFundCode(Record record) {
+        if (FUNDCODE_FIXED_VALUE != null) {
+            return FUNDCODE_FIXED_VALUE;
+        } else if (FUNDCODE_FIELD == null) {
+            return null;
+        }
+
         DataField field = (DataField) record.getVariableField(FUNDCODE_FIELD);
         if (field != null) {
             return field.getSubfieldsAsString(FUNDCODE_SUBFIELD);
@@ -129,6 +151,10 @@ public class MarcUtils {
     }
 
     public String getVendorCode(Record record) {
+        if (VENDOR_FIXED_VALUE != null) {
+            return VENDOR_FIXED_VALUE;
+        }
+
         DataField field = (DataField) record.getVariableField(VENDOR_FIELD);
         if (field != null) {
             return field.getSubfieldsAsString(VENDOR_SUBFIELD);
@@ -138,6 +164,10 @@ public class MarcUtils {
     }
 
     public String getVendorItemId(Record record) {
+        if (VENDORID_FIELD == null) {
+            return null;
+        }
+
         DataField field = (DataField) record.getVariableField(VENDORID_FIELD);
         if (field != null) {
             return field.getSubfieldsAsString(VENDORID_SUBFIELD);
@@ -147,6 +177,12 @@ public class MarcUtils {
     }
 
     public String getLocation(Record record) {
+        if (LOCATION_FIXED_VALUE != null) {
+            return LOCATION_FIXED_VALUE;
+        } else if (LOCATION_FIELD == null) {
+            return new String();
+        }
+
         DataField field = (DataField) record.getVariableField(LOCATION_FIELD);
         if (field != null) {
             return field.getSubfieldsAsString(LOCATION_SUBFIELD);
@@ -156,33 +192,49 @@ public class MarcUtils {
     }
 
     public String getRequester(Record record) {
+        if (REQUESTER_FIELD == null) {
+            return null;
+        }
+
         DataField field = (DataField) record.getVariableField(REQUESTER_FIELD);
         if (field != null) {
             return field.getSubfieldsAsString(REQUESTER_SUBFIELD);
         } else {
-            return new String();
+            return null;
         }
     }
 
     public String getCurrency(Record record) {
+        if (CURRENCY_FIELD == null) {
+            return null;
+        }
+
         DataField field = (DataField) record.getVariableField(CURRENCY_FIELD);
         if (field != null) {
             return field.getSubfieldsAsString(CURRENCY_SUBFIELD);
         } else {
-            return new String();
+            return null;
         }
     }
 
     public String getRush(Record record) {
+        if (RUSH_FIELD == null) {
+            return null;
+        }
+
         DataField field = (DataField) record.getVariableField(RUSH_FIELD);
         if (field != null) {
             return field.getSubfieldsAsString(RUSH_SUBFIELD);
         } else {
-            return new String();
+            return null;
         }
     }
 
     public String getInternalNotes(Record record) {
+        if (INTERNAL_NOTES_FIELD == null) {
+            return null;
+        }
+
         DataField field =
             (DataField) record.getVariableField(INTERNAL_NOTES_FIELD);
         if (field != null) {
@@ -192,30 +244,42 @@ public class MarcUtils {
     }
 
     public String getReceivingNote(Record record) {
+        if (RECEIVING_NOTE_FIELD == null) {
+            return null;
+        }
+
         DataField field =
             (DataField) record.getVariableField(RECEIVING_NOTE_FIELD);
         if (field != null) {
             return field.getSubfieldsAsString(RECEIVING_NOTE_SUBFIELD);
         } else {
-            return new String();
+            return null;
         }
     }
 
     public String getSelector(Record record) {
+        if (SELECTOR_FIELD == null) {
+            return null;
+        }
+
         DataField field = (DataField) record.getVariableField(SELECTOR_FIELD);
         if (field != null) {
             return field.getSubfieldsAsString(SELECTOR_SUBFIELD);
         } else {
-            return new String();
+            return null;
         }
     }
 
     public String getElectronicIndicator(Record record) {
+        if (ELECTRONIC_FIELD == null) {
+            return null;
+        }
+
         DataField field = (DataField) record.getVariableField(ELECTRONIC_FIELD);
         if (field != null) {
             return field.getSubfieldsAsString(ELECTRONIC_SUBFIELD);
         }
-        return new String();
+        return null;
     }
 
     public String getPublisher(Record record) {
@@ -252,6 +316,10 @@ public class MarcUtils {
     }
 
     public String getBarcode(Record record) {
+        if (BARCODE_FIELD == null) {
+            return null;
+        }
+
         DataField field = (DataField) record.getVariableField(BARCODE_FIELD);
         if (field != null) {
             return field.getSubfieldsAsString(BARCODE_SUBFIELD).trim();
@@ -261,6 +329,12 @@ public class MarcUtils {
     }
 
     public String getRecordSource(Record record) {
+        if (RECORD_SOURCE_FIXED_VALUE != null) {
+            return RECORD_SOURCE_FIXED_VALUE;
+        } else if (RECORD_SOURCE_FIELD == null) {
+            return null;
+        }
+
         String recordSource = new String();
         List<DataField> fields = record.getDataFields();
 
@@ -483,6 +557,10 @@ public class MarcUtils {
     }
 
     private void trimBarcode(Record record) {
+        if (BARCODE_FIELD == null) {
+            return;
+        }
+
       DataField nineSevenSix = (DataField) record.getVariableField(BARCODE_FIELD);
       String barcode = getBarcode(record);
 
