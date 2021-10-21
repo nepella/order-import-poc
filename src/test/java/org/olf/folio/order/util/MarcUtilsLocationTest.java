@@ -18,7 +18,7 @@ public class MarcUtilsLocationTest extends MarcUtilsBaseTest {
 
     @Test
     public void testGetLocation() {
-        String fname = amazonFO; 
+        String fname = amazonFO;
         try {
             List<Record> records = getRecords(fname);
             for (Record record : records) {
@@ -29,12 +29,12 @@ public class MarcUtilsLocationTest extends MarcUtilsBaseTest {
                 } else {
                     assertNotNull(location);
                     assertTrue(location.length() > 0);
-                } 
+                }
             }
         } catch (Exception e) {
             fail(e.getMessage());
         }
-         
-    } 
+
+    }
 
 }

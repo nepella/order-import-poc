@@ -14,30 +14,30 @@ import org.marc4j.marc.Record;
 
 
 public class MarcUtilsLinksTest extends MarcUtilsBaseTest {
-	
-	boolean debug = false;
 
-	@Test
-	public void testGetLinks() {
-		String fname = requestors;
-		try {
-			List<Record> records = getRecords(fname);
-			for (Record record: records) {
-				JSONArray eresources = marcUtils.getLinks(record);
-				if (debug && ! eresources.isEmpty()) {
-			       System.out.println(eresources.toString(3));
-			       System.out.println("len: "+ eresources.length());
-				} else {
-					assertNotNull(eresources);
-					if (eresources.length() > 0) {
-						JSONObject obj = (JSONObject) eresources.get(0);
-						assertNotNull(obj);
-					}
-				}
-			}
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-	}	 
+    boolean debug = false;
+
+    @Test
+    public void testGetLinks() {
+        String fname = requestors;
+        try {
+            List<Record> records = getRecords(fname);
+            for (Record record: records) {
+                JSONArray eresources = marcUtils.getLinks(record);
+                if (debug && ! eresources.isEmpty()) {
+                   System.out.println(eresources.toString(3));
+                   System.out.println("len: "+ eresources.length());
+                } else {
+                    assertNotNull(eresources);
+                    if (eresources.length() > 0) {
+                        JSONObject obj = (JSONObject) eresources.get(0);
+                        assertNotNull(obj);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
 
 }

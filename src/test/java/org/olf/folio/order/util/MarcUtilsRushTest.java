@@ -9,29 +9,29 @@ import static org.junit.jupiter.api.Assertions.fail;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
 
-public class MarcUtilsRushTest extends MarcUtilsBaseTest { 
-	
-	boolean debug = false;
+public class MarcUtilsRushTest extends MarcUtilsBaseTest {
 
-	@Test
-	public void testGetRush() {
-		String fname = requestors; 
-		try {
-			List<Record> records = getRecords(fname);
-			for (Record record: records) {
-				DataField nineEightyOne = (DataField) record.getVariableField("981");
-				String rush = marcUtils.getRush(nineEightyOne);
-				if (debug) {
-					System.out.println(fname + " - rush: " + rush);
-				} else {
-					assertNotNull(rush);
-					assertTrue(rush.length() > 0);
-				} 
-			}
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		 
-	} 
+    boolean debug = false;
+
+    @Test
+    public void testGetRush() {
+        String fname = requestors;
+        try {
+            List<Record> records = getRecords(fname);
+            for (Record record: records) {
+                DataField nineEightyOne = (DataField) record.getVariableField("981");
+                String rush = marcUtils.getRush(nineEightyOne);
+                if (debug) {
+                    System.out.println(fname + " - rush: " + rush);
+                } else {
+                    assertNotNull(rush);
+                    assertTrue(rush.length() > 0);
+                }
+            }
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+    }
 
 }

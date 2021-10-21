@@ -18,16 +18,16 @@ import org.marc4j.marc.Record;
  * @author jaf30
  *
  */
-public class MarcUtilsSeriesFieldsTest extends MarcUtilsBaseTest { 
-    
-    boolean debug = true; 
-    
+public class MarcUtilsSeriesFieldsTest extends MarcUtilsBaseTest {
+
+    boolean debug = true;
+
     @Test
-    public void testGetSeriesFields() { 
-         
+    public void testGetSeriesFields() {
+
         List<String> myFnames = new ArrayList<String>();
         myFnames.add(this.bksFO);
-        
+
         try {
             for (String fname : myFnames) {
                 List<Record> records = getRecords(fname);
@@ -35,7 +35,7 @@ public class MarcUtilsSeriesFieldsTest extends MarcUtilsBaseTest {
                 for (Record record : records) {
                     JSONObject jsonObj = new JSONObject();
                     List<String> seriesFields = marcUtils.getSeriesFields(record);
-                     
+
                     if (debug) {
                         System.out.println("record: " + recNum++);
                         for (String s : seriesFields) {
@@ -46,11 +46,11 @@ public class MarcUtilsSeriesFieldsTest extends MarcUtilsBaseTest {
                         assertNotNull(seriesFields);
                         //assertTrue(seriesFields.size() > 0);
                     }
-                } 
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
-    } 
+    }
 }

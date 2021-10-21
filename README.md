@@ -17,7 +17,7 @@ Proof of concept workaround needed until FOLIO supports importing MARC records t
 * Retreive the new instance (GET inventory/instances/theinstanceid)
 * Posts to copycat (POST copycat/imports)
 
-### If you want to try it 
+### If you want to try it
 * copy the src/main/resources/application.properties.example file to src/main/resources/application.properties
 * you will have to add the okapi userid/password and you may have to adjust the file upload path (where it will save the uploaded file)
 * call: mvn jetty:run
@@ -57,7 +57,7 @@ This app requires a FOLIO user account with the following permissions granted:
 * `ui-orders.order.create`
 
 ### Lots of areas for improvement including:
-* Better way to get data out of the MARC record to include on the instance. 
+* Better way to get data out of the MARC record to include on the instance.
 * Better way to store reference values needed for lookup
 * Current version contains some hard-coded values (e.g. currency: USD)
 * If duplicate PO number error - get the next PO number and try again
@@ -68,15 +68,15 @@ This app requires a FOLIO user account with the following permissions granted:
 
 * 11-16-2020
   - Removed reference to the 001 field.  Wasn't necessary and was causing an error when it was missing.
- 
+
 * 9-23-2020
   - Removed the check for enough money in the budget
   - Fixed where the electronic indicator is initialized (needed to be per record)
-  
+
 * 7-31-2020
   - Better handling of special characters
   - Handles multiple records in a file
-  - Validates each record in the file 
+  - Validates each record in the file
 
 
 

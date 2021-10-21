@@ -15,16 +15,16 @@ import org.marc4j.marc.Record;
  * @author jaf30
  *
  */
-public class MarcUtilsPriceTest extends MarcUtilsBaseTest { 
-    
+public class MarcUtilsPriceTest extends MarcUtilsBaseTest {
+
     boolean debug = false;
 
     /**
-     * 
+     *
      */
     @Test
     public void testGetPrice() {
-        String fname = amazonFO; 
+        String fname = amazonFO;
         try {
             List<Record> records = getRecords(fname);
             for (Record record : records) {
@@ -35,11 +35,11 @@ public class MarcUtilsPriceTest extends MarcUtilsBaseTest {
                 } else {
                     assertNotNull(price);
                     assertTrue(price.length() > 0);
-                } 
+                }
             }
         } catch (Exception e) {
             fail(e.getMessage());
         }
-         
-    } 
+
+    }
 }

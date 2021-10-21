@@ -18,8 +18,8 @@ import org.marc4j.marc.Record;
  * @author jaf30
  *
  */
-public class MarcUtilsBuildIdentifiersTest extends MarcUtilsBaseTest { 
-    
+public class MarcUtilsBuildIdentifiersTest extends MarcUtilsBaseTest {
+
     boolean debug = false;
 
     @Test
@@ -30,10 +30,10 @@ public class MarcUtilsBuildIdentifiersTest extends MarcUtilsBaseTest {
         lookupTable.put("ISSN", "913300b2-03ed-469a-8179-c1092c991227");
         lookupTable.put("Invalid ISSN", "27fd35a6-b8f6-41f2-aa0e-9c663ceb250c");
         lookupTable.put("Linking ISSN", "5860f255-a27f-4916-a830-262aa900a6b9");
-        
+
         List<String> myFnames = new ArrayList<String>();
         myFnames.add(this.singleharrass);
-        
+
         try {
             for (String fname : myFnames) {
                 // System.out.println(fname);
@@ -48,11 +48,11 @@ public class MarcUtilsBuildIdentifiersTest extends MarcUtilsBaseTest {
                         assertNotNull(identifiers);
                         assertTrue(identifiers.length() > 0);
                     }
-                } 
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
-    } 
+    }
 }

@@ -10,30 +10,30 @@ import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
 
 public class MarcUtilsFundCodeTest extends MarcUtilsBaseTest {
-	
-	boolean debug = false;  
 
-	@Test
-	public void testGetFundCode() {
-		String fname = harrass; 
-		try {
-			List<Record> records = getRecords(fname);
-			for (Record record: records) {
-				DataField nineEighty = (DataField) record.getVariableField("980");
-				//System.out.println(nineEighty.toString());
-				String fundCode = marcUtils.getFundCode(nineEighty);
-				 
-				if (debug) {
-					System.out.println(fname + " - fundCode: " + fundCode);
-				} else {
-					assertNotNull(fundCode);
-					assertTrue(fundCode.length() > 0);
-				}
-			}
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		 
-	} 
+    boolean debug = false;
+
+    @Test
+    public void testGetFundCode() {
+        String fname = harrass;
+        try {
+            List<Record> records = getRecords(fname);
+            for (Record record: records) {
+                DataField nineEighty = (DataField) record.getVariableField("980");
+                //System.out.println(nineEighty.toString());
+                String fundCode = marcUtils.getFundCode(nineEighty);
+
+                if (debug) {
+                    System.out.println(fname + " - fundCode: " + fundCode);
+                } else {
+                    assertNotNull(fundCode);
+                    assertTrue(fundCode.length() > 0);
+                }
+            }
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+    }
 
 }

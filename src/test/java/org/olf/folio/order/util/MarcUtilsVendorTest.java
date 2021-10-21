@@ -11,12 +11,12 @@ import org.marc4j.marc.Record;
 
 /**
  * MarcUtilsVendorTest.
- * 
+ *
  * @author jaf30
  *
  */
-public class MarcUtilsVendorTest extends MarcUtilsBaseTest { 
-    boolean debug = false; 
+public class MarcUtilsVendorTest extends MarcUtilsBaseTest {
+    boolean debug = false;
 
     @Test
     public void testGetVendor() {
@@ -31,12 +31,12 @@ public class MarcUtilsVendorTest extends MarcUtilsBaseTest {
                 } else {
                     assertNotNull(vendor);
                     assertTrue(vendor.length() > 0);
-                } 
+                }
             }
         } catch (Exception e) {
             fail(e.getMessage());
         }
-         
-    } 
+
+    }
 
 }

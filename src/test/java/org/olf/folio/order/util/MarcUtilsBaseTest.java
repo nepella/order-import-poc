@@ -9,15 +9,15 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.marc4j.MarcReader;
-import org.marc4j.MarcStreamReader; 
+import org.marc4j.MarcStreamReader;
 import org.marc4j.marc.Record;
- 
+
 /**
  * MarcUtilsBaseTest.
- * 
+ *
  * @author jaf30
  *
- */ 
+ */
 public class MarcUtilsBaseTest {
 
     private String buildDir;
@@ -50,7 +50,7 @@ public class MarcUtilsBaseTest {
         this.bksFO = this.buildDir + "/marc-test-files/w.j.bksFO.1.mrc";
         this.shelfReadyAux = this.buildDir + "/marc-test-files/shelfreadyAux.mrc";
         this.approvals = this.buildDir + "/marc-test-files/approvals.mrc";
-        
+
         fnames.add(this.harrass);
         fnames.add(this.casalini);
         fnames.add(this.physical);

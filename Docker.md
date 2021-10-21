@@ -1,7 +1,7 @@
 # Dockerizing order-import-poc
 
 ### Overview
-Docker is a tool designed to make it easier to create, deploy, and run applications by using containers. Containers allow a developer to package up an application with all of the parts it needs, such as libraries and other dependencies, and deploy it as one package. 
+Docker is a tool designed to make it easier to create, deploy, and run applications by using containers. Containers allow a developer to package up an application with all of the parts it needs, such as libraries and other dependencies, and deploy it as one package.
 
 ### Setting up the Environment
 The order-import-poc application requires several environment variables to be set up and these can be passed into the application using a `.env` file. An example can be found in the repository root as `.env.example`.

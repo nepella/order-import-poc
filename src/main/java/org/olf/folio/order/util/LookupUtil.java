@@ -9,7 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONObject; 
+import org.json.JSONObject;
 import org.olf.folio.order.services.ApiService;
 
 /**
@@ -17,9 +17,9 @@ import org.olf.folio.order.services.ApiService;
  *
  */
 public class LookupUtil {
-    
+
     private static final Logger logger = Logger.getLogger(LookupUtil.class);
-    private String baseOkapEndpoint; 
+    private String baseOkapEndpoint;
     private List<String> referenceTables = new ArrayList<String>();
     private ApiService apiService;
 
@@ -74,21 +74,21 @@ public class LookupUtil {
     /**
      * Constructor.
      */
-    public LookupUtil() { 
+    public LookupUtil() {
         //
     }
-    
+
     /**
      * LookupUtil.
      * @param baseOkapEndpoint.
      * @param apiService.
      */
-    public LookupUtil(String baseOkapEndpoint, ApiService apiService) { 
+    public LookupUtil(String baseOkapEndpoint, ApiService apiService) {
         this.baseOkapEndpoint = baseOkapEndpoint;
     }
-    
+
     /**
-     * 
+     *
      */
     public void load() {
         logger.trace("set endpoints");
@@ -102,18 +102,18 @@ public class LookupUtil {
         setEndPoint("note-types", "1000");
         setEndPoint("material-types", "1000");
         setEndPoint("instance-types", "1000");
-        setEndPoint("holdings-types", "1000"); 
+        setEndPoint("holdings-types", "1000");
     }
-    
+
     /**
      * setEndPoint.
      * @param type
      * @param limit
      */
-    public void setEndPoint(String type, String limit) { 
+    public void setEndPoint(String type, String limit) {
         this.referenceTables.add(this.baseOkapEndpoint + type + "?limit=" + limit);
     }
-    
+
     /**
      * @param token
      * @return
@@ -161,7 +161,7 @@ public class LookupUtil {
 
         return (HashMap<String, String>) table;
     }
-    
+
     /**
      * @param endpoint
      * @param token
@@ -170,29 +170,29 @@ public class LookupUtil {
      * @throws InterruptedException
      * @throws Exception
      */
-    public HashMap<String,String> getBillingAddresses(String endpoint, String token) throws IOException, InterruptedException, Exception  { 
-        Map<String, String> table = new HashMap<String, String>();        
-        String response = this.apiService.callApiGet(endpoint, token); 
-         
-        JSONObject jsonObject = new JSONObject(response);         
-        
+    public HashMap<String,String> getBillingAddresses(String endpoint, String token) throws IOException, InterruptedException, Exception  {
+        Map<String, String> table = new HashMap<String, String>();
+        String response = this.apiService.callApiGet(endpoint, token);
+
+        JSONObject jsonObject = new JSONObject(response);
+
         JSONArray configsArray = jsonObject.getJSONArray("configs");
         Iterator elementsIterator = configsArray.iterator();
         while (elementsIterator.hasNext()) {
             JSONObject element = (JSONObject) elementsIterator.next();
-             
+
             String value = element.getString("value");
             String uuid = element.getString("id");
             // System.out.println(element.toString(3));
-            // System.out.println(); 
+            // System.out.println();
             JSONObject values = new JSONObject(value);
-            String name = values.getString("name"); 
+            String name = values.getString("name");
             table.put(name, uuid);
-                  
+
         }
         return (HashMap<String, String>) table;
     }
-    
+
     /**
      * @param endpoint
      * @param token
@@ -202,8 +202,8 @@ public class LookupUtil {
      * @throws Exception
      */
     public String getResponse(String endpoint, String token) throws IOException, InterruptedException, Exception {
-        String response = this.apiService.callApiGet(endpoint, token); 
-        return response; 
+        String response = this.apiService.callApiGet(endpoint, token);
+        return response;
     }
 
 }

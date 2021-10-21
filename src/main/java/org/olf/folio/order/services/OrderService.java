@@ -25,61 +25,61 @@ import org.olf.folio.order.OrderImport;
 @Path ("/upload")
 public class OrderService {
 
-	@Context
-	private HttpServletRequest servletRequest;
-	private HttpServletResponse servletResponse;
+    @Context
+    private HttpServletRequest servletRequest;
+    private HttpServletResponse servletResponse;
 
 
-	@POST
-	@Produces("application/json")
-	public Response uploadFile(
-			@FormDataParam("order-file") InputStream uploadedInputStream,
-			@FormDataParam("order-file") FormDataContentDisposition fileDetails) throws IOException, InterruptedException, Exception {
+    @POST
+    @Produces("application/json")
+    public Response uploadFile(
+            @FormDataParam("order-file") InputStream uploadedInputStream,
+            @FormDataParam("order-file") FormDataContentDisposition fileDetails) throws IOException, InterruptedException, Exception {
 
-		System.out.println(fileDetails.getFileName());
-		String filePath = (String) servletRequest.getServletContext().getAttribute("uploadFilePath");
-		//String uploadedFileLocation = filePath + fileDetails.getFileName();
-		UUID fileName = UUID.randomUUID();
-		String uploadedFileLocation = filePath + fileName.toString() + ".mrc";
-		// SAVE FILE TO DISK
-		writeFile(uploadedInputStream, uploadedFileLocation);
-		// PASS FILE INFO TO 'OrderImport' WHICH MAKES THE FOLIO API CALLS
-		OrderImport  testImport = new OrderImport();
-		testImport.setMyContext(servletRequest.getServletContext());
-		try {
-			JSONArray message = testImport.upload(fileName.toString() + ".mrc");
-			return Response.status(Response.Status.OK).entity(message.toString()).build();		
-		}
-		catch(Exception e) {
-			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getLocalizedMessage()).build();		
-		}
-		
-	}
-	
-	@GET
-	public Response justACheck() throws IOException, InterruptedException, Exception {
-		    //RESET REFERENCE VALUES - SNAPSHOT CHANGES EVERY DAY
-		   servletRequest.getServletContext().setAttribute(Constants.LOOKUP_TABLE,null);
-		   return Response.status(Response.Status.OK).entity("OK").build();	
-	}
+        System.out.println(fileDetails.getFileName());
+        String filePath = (String) servletRequest.getServletContext().getAttribute("uploadFilePath");
+        //String uploadedFileLocation = filePath + fileDetails.getFileName();
+        UUID fileName = UUID.randomUUID();
+        String uploadedFileLocation = filePath + fileName.toString() + ".mrc";
+        // SAVE FILE TO DISK
+        writeFile(uploadedInputStream, uploadedFileLocation);
+        // PASS FILE INFO TO 'OrderImport' WHICH MAKES THE FOLIO API CALLS
+        OrderImport  testImport = new OrderImport();
+        testImport.setMyContext(servletRequest.getServletContext());
+        try {
+            JSONArray message = testImport.upload(fileName.toString() + ".mrc");
+            return Response.status(Response.Status.OK).entity(message.toString()).build();
+        }
+        catch(Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getLocalizedMessage()).build();
+        }
+
+    }
+
+    @GET
+    public Response justACheck() throws IOException, InterruptedException, Exception {
+            //RESET REFERENCE VALUES - SNAPSHOT CHANGES EVERY DAY
+           servletRequest.getServletContext().setAttribute(Constants.LOOKUP_TABLE,null);
+           return Response.status(Response.Status.OK).entity("OK").build();
+    }
 
 
-	private void writeFile(InputStream uploadedInputStream,
-			String uploadedFileLocation) {
-		try {
-			OutputStream out = new FileOutputStream(new File(
-					uploadedFileLocation));
-			int read = 0;
-			byte[] bytes = new byte[1024];
+    private void writeFile(InputStream uploadedInputStream,
+            String uploadedFileLocation) {
+        try {
+            OutputStream out = new FileOutputStream(new File(
+                    uploadedFileLocation));
+            int read = 0;
+            byte[] bytes = new byte[1024];
 
-			out = new FileOutputStream(new File(uploadedFileLocation));
-			while ((read = uploadedInputStream.read(bytes)) != -1) {
-				out.write(bytes, 0, read);
-			}
-			out.flush();
-			out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+            out = new FileOutputStream(new File(uploadedFileLocation));
+            while ((read = uploadedInputStream.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+            out.flush();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

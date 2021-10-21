@@ -25,10 +25,10 @@
     <servlet-name>JerseyTest</servlet-name>
     <url-pattern>/import/service/*</url-pattern>
   </servlet-mapping>
-  
-  
-  
-    
+
+
+
+
   <servlet>
     <display-name>OrderController</display-name>
     <servlet-name>OrderController</servlet-name>
@@ -38,8 +38,8 @@
      <servlet-name>OrderController</servlet-name>
      <url-pattern>/import</url-pattern>
   </servlet-mapping>
-    
-    
+
+
 
 
 

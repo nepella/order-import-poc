@@ -18,19 +18,19 @@ import org.marc4j.marc.Record;
  * @author jaf30
  *
  */
-public class MarcUtilsBuildContributorsTest extends MarcUtilsBaseTest { 
-    
+public class MarcUtilsBuildContributorsTest extends MarcUtilsBaseTest {
+
     boolean debug = false;
     String personalNameTypeId = "2b94c631-fca9-4892-a730-03ee529ffe2a";
-    
+
     @Test
     public void testBuildContributors() {
         HashMap<String, String> lookupTable = new HashMap<String, String>();
         //lookupTable.put("bkp", "8261054f-be78-422d-bd51-4ed9f33c3422");
-         
+
         List<String> myFnames = new ArrayList<String>();
         myFnames.add(this.amazonFO);
-        
+
         try {
             for (String fname : myFnames) {
                 // System.out.println(fname);
@@ -45,11 +45,11 @@ public class MarcUtilsBuildContributorsTest extends MarcUtilsBaseTest {
                         assertNotNull(contributors);
                         assertTrue(contributors.length() > 0);
                     }
-                } 
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
-    } 
+    }
 }

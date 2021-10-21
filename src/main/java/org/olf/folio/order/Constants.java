@@ -2,7 +2,7 @@ package org.olf.folio.order;
 
 /**
  * Constants for the app.
- * 
+ *
  * @author jaf30
  *
  */

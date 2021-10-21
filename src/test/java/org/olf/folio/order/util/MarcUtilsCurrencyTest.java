@@ -1,5 +1,5 @@
 package org.olf.folio.order.util;
- 
+
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
 
-public class MarcUtilsCurrencyTest extends MarcUtilsBaseTest { 
-    
+public class MarcUtilsCurrencyTest extends MarcUtilsBaseTest {
+
     boolean debug = false;
 
     @Test

@@ -11,30 +11,30 @@ import static org.junit.jupiter.api.Assertions.fail;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
 
-public class MarcUtilsReceivingNoteTest extends MarcUtilsBaseTest { 
-	 
+public class MarcUtilsReceivingNoteTest extends MarcUtilsBaseTest {
+
     boolean debug = false;
-    
+
     // ignore test until it's determined what to do with notes
-	@Ignore
-	public void testGetReceivingNote() {
-		String fname = requestors;
-		try {
-			List<Record> records = getRecords(fname);
-			for (Record record: records) {
-				DataField nineEightyOne = (DataField) record.getVariableField("981");
-				String notes = marcUtils.getReceivingNote(nineEightyOne);
-				if (debug) {
-					System.out.println(fname + " - notes: " + notes);
-				} else {
-					assertNotNull(notes);
-					assertTrue(notes.length() > 0);
-				} 
-			}
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		 
-	} 
+    @Ignore
+    public void testGetReceivingNote() {
+        String fname = requestors;
+        try {
+            List<Record> records = getRecords(fname);
+            for (Record record: records) {
+                DataField nineEightyOne = (DataField) record.getVariableField("981");
+                String notes = marcUtils.getReceivingNote(nineEightyOne);
+                if (debug) {
+                    System.out.println(fname + " - notes: " + notes);
+                } else {
+                    assertNotNull(notes);
+                    assertTrue(notes.length() > 0);
+                }
+            }
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+    }
 
 }
