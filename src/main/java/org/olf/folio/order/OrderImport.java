@@ -242,7 +242,7 @@ public class OrderImport {
                 cost.put("listUnitPrice", price);
                 cost.put("quantityPhysical", 1);
                 location.put("quantityPhysical", quantityNo);
-                location.put("locationId", lookupTable.get(locationName + "-location"));
+                location.put("locationId", "05101e82-872c-4286-9802-9bf42fe35555");
                 locations.put(location);
 
 
