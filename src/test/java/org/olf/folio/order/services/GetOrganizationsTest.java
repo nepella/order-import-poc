@@ -53,7 +53,10 @@ public class GetOrganizationsTest extends ApiBaseTest {
         try {
             String encodedOrgCode = URLEncoder.encode("\"" + orgCode + "\"", StandardCharsets.UTF_8.name());
 
-            String organizationEndpoint = getBaseOkapEndpoint() + "organizations-storage/organizations?query=(code==" + encodedOrgCode + ")";
+            String organizationEndpoint = getBaseOkapEndpoint()
+                    + "organizations-storage/organizations?query="
+                    + "(code=" + encodedOrgCode
+                    + "%20or%20aliases=" + encodedOrgCode + ")";
             try {
                 String orgLookupResponse = getApiService().callApiGet(organizationEndpoint,  getToken());
                     JSONObject orgObject = new JSONObject(orgLookupResponse);

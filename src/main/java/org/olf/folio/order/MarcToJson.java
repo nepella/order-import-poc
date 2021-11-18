@@ -357,7 +357,9 @@ public class MarcToJson {
                     logger.debug("encodedOrgCode: " + encodedOrgCode);
 
                     String organizationEndpoint = this.getEndpoint()
-                            + "organizations-storage/organizations?query=(code==" + encodedOrgCode + ")";
+                            + "organizations-storage/organizations?query="
+                            + "(code=" + encodedOrgCode
+                            + "%20or%20aliases=" + encodedOrgCode + ")";
                     logger.debug("organizationEndpoint: " + organizationEndpoint);
                     String orgLookupResponse = apiService.callApiGet(organizationEndpoint, token);
                     JSONObject orgObject = new JSONObject(orgLookupResponse);
