@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.marc4j.MarcJsonWriter;
@@ -23,6 +24,7 @@ import org.marc4j.marc.Subfield;
 import org.marc4j.marc.VariableField;
 
 public class MarcUtils {
+    private static final Logger logger = Logger.getLogger(MarcUtils.class);
 
     private final String TITLE_FIELD = "245";
     private final String TITLE_FIELD_TITLE1_SUBFIELD = "a";
@@ -40,18 +42,6 @@ public class MarcUtils {
 
     private final String QUANTITY_FIELD = "980";
     private final String QUANTITY_SUBFIELD = "g";
-
-    private final String FUNDCODE_FIELD = "981";
-    private final String FUNDCODE_SUBFIELD = "a";
-    private final String FUNDCODE_FIXED_VALUE = null;
-
-    private final String VENDOR_FIELD = null;
-    private final String VENDOR_SUBFIELD = null;
-    private final String VENDOR_FIXED_VALUE = "undefined";
-
-    // FIXME: I don't know what this is.
-    private final String VENDORID_FIELD = null;
-    private final String VENDORID_SUBFIELD = null;
 
     private final String INTERNAL_NOTES_FIELD = null;
     private final String INTERNAL_NOTES_SUBFIELD = null;
@@ -87,6 +77,32 @@ public class MarcUtils {
     private final String RECORD_SOURCE_SUBFIELD = null;
     // FIXME
     private final String RECORD_SOURCE_FIXED_VALUE = "appr";
+
+    private static String getSubfieldIfExists(Record record, String reqField,
+            String reqSubfield) {
+        DataField field;
+        String value = null;
+
+        field = (DataField) record.getVariableField(reqField);
+        if (field != null) {
+            value = field.getSubfieldsAsString(reqSubfield);
+        }
+        return value;
+    }
+
+    private static String getDeterminer(Record record) {
+        VariableField field;
+        String determiner = null;
+
+        field = record.getVariableField("003");
+        if (field != null) {
+            determiner = field.toString().replaceFirst("^003 ", "");
+        } else {
+            logger.info("Record has no 003 field.");
+        }
+
+        return determiner;
+    }
 
     public MarcUtils() {
         // TODO Auto-generated constructor stub
@@ -136,44 +152,62 @@ public class MarcUtils {
     }
 
     public String getFundCode(Record record) {
-        if (FUNDCODE_FIXED_VALUE != null) {
-            return FUNDCODE_FIXED_VALUE;
-        } else if (FUNDCODE_FIELD == null) {
-            return null;
+        String vendorCode, code = null;
+
+        switch (getDeterminer(record)) {
+        case "OCoLC":
+            vendorCode = getVendorCode(record);
+            if (vendorCode != null
+                    && vendorCode.matches("^(ybp77|ybp91|ybp98)$")) {
+                code = "ybpbl";
+            } else {
+                logger.warn("Unexpected vendor code: " + vendorCode);
+            }
+            break;
+
+        case "GyWOH":
+        case "SP-Ba":
+            code = getSubfieldIfExists(record, "981", "b");
+            break;
         }
 
-        DataField field = (DataField) record.getVariableField(FUNDCODE_FIELD);
-        if (field != null) {
-            return field.getSubfieldsAsString(FUNDCODE_SUBFIELD);
-        } else {
-            return new String();
-        }
+        return code;
     }
 
     public String getVendorCode(Record record) {
-        if (VENDOR_FIXED_VALUE != null) {
-            return VENDOR_FIXED_VALUE;
+        String code = null;
+
+        switch (getDeterminer(record)) {
+        case "OCoLC":
+            code = getSubfieldIfExists(record, "981", "a");
+            break;
+
+        case "GyWOH":
+            code = "hars";
+            break;
+
+        case "SP-Ba":
+            code = "puv";
+            break;
         }
 
-        DataField field = (DataField) record.getVariableField(VENDOR_FIELD);
-        if (field != null) {
-            return field.getSubfieldsAsString(VENDOR_SUBFIELD);
-        } else {
-            return new String();
-        }
+        return code;
     }
 
     public String getVendorItemId(Record record) {
-        if (VENDORID_FIELD == null) {
-            return null;
+        String code = null;
+
+        switch (getDeterminer(record)) {
+        case "OCoLC":
+            code = getSubfieldIfExists(record, "935", "a");
+            break;
+
+        case "GyWOH":
+            code = getSubfieldIfExists(record, "981", "d");
+            break;
         }
 
-        DataField field = (DataField) record.getVariableField(VENDORID_FIELD);
-        if (field != null) {
-            return field.getSubfieldsAsString(VENDORID_SUBFIELD);
-        } else {
-            return null;
-        }
+        return code;
     }
 
     public String getLocation(Record record) {
