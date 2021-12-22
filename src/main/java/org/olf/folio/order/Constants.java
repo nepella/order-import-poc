@@ -9,7 +9,7 @@ package org.olf.folio.order;
 public class Constants {
     public static final String BILLINGMAP = "billingMap";
     public static final String COPYCAT_DEFAULT_PROFILE =
-        "4fbbb17c-4d6e-4758-840c-325c88b978ce";
+        "520b8781-cf81-4e5b-90bb-b88d283aa1a7";
     public static final String COPYCAT_SHELFREADY_PROFILE =
         COPYCAT_DEFAULT_PROFILE;
     public static final String LOOKUP_TABLE = "lookupTable";
