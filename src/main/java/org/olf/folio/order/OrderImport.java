@@ -155,7 +155,7 @@ public class OrderImport {
         order.put("reEncumber", false);
         order.put("id", orderUUID.toString());
         order.put("approved", true);
-        order.put("workflowStatus", "Open");
+        order.put("workflowStatus", "Pending");
 
         JSONArray poLines = new JSONArray();
 
@@ -400,7 +400,7 @@ public class OrderImport {
         String orderResponse = apiService.callApiPostWithUtf8(baseOkapEndpoint + "orders/composite-orders", order, token);
 
 
-        //GET THE UPDATED PURCHASE ORDER FROM THE API AND PULL OUT THE ID FOR THE INSTANCE FOLIO CREATED:
+        //GET THE UPDATED PURCHASE ORDER FROM THE API
         logger.debug("getUpdatedPurchaseOrder");
         String updatedPurchaseOrder = apiService.callApiGet(baseOkapEndpoint + "orders/composite-orders/" +orderUUID.toString() ,token);
         JSONObject updatedPurchaseOrderJson = new JSONObject(updatedPurchaseOrder);
@@ -422,7 +422,6 @@ public class OrderImport {
 
                 String poLineUUID = poLineObject.getString("id");
                 String poLineNumber = poLineObject.getString("poLineNumber");
-                String instanceId = poLineObject.getString("instanceId");
                 String title = poLineObject.getString("titleOrPackage");
                 String requester = poLineObject.optString("requester");
                 String internalNote = poLineObject.optString("description");
@@ -461,27 +460,6 @@ public class OrderImport {
                 if (seriesFields.size() > 0) {
                     responseMessage.put("seriesFields", seriesFields);
                 }
-
-                // Get the Inventory Instance FOLIO created, so we can render the Instance HRID in the results
-                logger.debug("get InstanceResponse");
-                String instanceResponse = apiService.callApiGet(baseOkapEndpoint + "inventory/instances/" + instanceId, token);
-                JSONObject instanceAsJson = new JSONObject(instanceResponse);
-                logger.debug(instanceAsJson.toString(3));
-                String hrid = instanceAsJson.getString("hrid");
-                responseMessage.put("instanceHrid", hrid);
-                responseMessage.put("instanceUUID", instanceId);
-
-                JSONObject instanceMetadata = instanceAsJson.getJSONObject("metadata");
-
-                ZonedDateTime today = ZonedDateTime.now();
-                ZonedDateTime instanceCreatedDate = ZonedDateTime.parse(instanceMetadata.getString("createdDate"));
-                Duration duration = Duration.between(instanceCreatedDate, today);
-
-                logger.info("TODAY:  " + today);
-                logger.info("CREATE: " + instanceCreatedDate);
-                logger.info("DIFF (HRS): " + duration.toHours());
-                logger.info("DIFF (MINS): " + duration.toMinutes());
-                logger.info(getMyContext().getAttribute("baseFolioUrl") + "inventory/view/" + instanceId);
 
                 responseMessages.put(responseMessage);
                 numRec++;
