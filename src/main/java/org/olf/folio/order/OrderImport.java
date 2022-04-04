@@ -51,6 +51,33 @@ public class OrderImport {
     private ApiService apiService;
     MarcUtils marcUtils = new MarcUtils();
 
+    private String getAcquisitionsUnitUuid(
+            String baseOkapEndpoint,
+            String token,
+            String name
+    ) throws Exception {
+        String resp = this.apiService.callApiGet(
+                baseOkapEndpoint + "acquisitions-units/units"
+                + "?query=((name="
+                + URLEncoder.encode("\"" + name + "\"))"),
+                token);
+        if (resp == null) {
+            return null;
+        }
+
+        JSONObject obj = new JSONObject(resp);
+        if (!obj.has("acquisitionsUnits")) {
+            return null;
+        }
+
+        JSONArray aus = obj.getJSONArray("acquisitionsUnits");
+        if (aus.isEmpty() || !aus.getJSONObject(0).has("id")) {
+            return null;
+        }
+
+        return aus.getJSONObject(0).getString("id");
+    }
+
     public  JSONArray  upload(String fileName) throws IOException, InterruptedException, Exception {
         long start = 0L; // to be used for timing
         long end = 0L;  // to be used for timing
@@ -70,6 +97,7 @@ public class OrderImport {
         String materialTypeName = (String) getMyContext().getAttribute("materialType");
         String billToDefault = (String) getMyContext().getAttribute("billToDefault");
         String billToApprovals = (String) getMyContext().getAttribute("billToApprovals");
+        String acquisitionsUnitName = (String) getMyContext().getAttribute("acquisitionsUnitName");
 
         JSONArray envErrors = validateEnvironment();
         if (envErrors != null) {
@@ -148,6 +176,9 @@ public class OrderImport {
         logger.trace("NEXT PO NUMBER: " + poNumberObj.get("poNumber"));
         // does this have to be a UUID object?
 
+        String acqUnitUuid = getAcquisitionsUnitUuid(baseOkapEndpoint, token,
+                acquisitionsUnitName);
+
         // CREATING THE PURCHASE ORDER
         JSONObject order = new JSONObject();
 
@@ -156,6 +187,7 @@ public class OrderImport {
         order.put("id", orderUUID.toString());
         order.put("approved", true);
         order.put("workflowStatus", "Pending");
+        order.put("acqUnitIds", new JSONArray(new String[]{ acqUnitUuid }));
 
         JSONArray poLines = new JSONArray();
 

@@ -34,6 +34,7 @@ public class ConfigurationListener implements ServletContextListener {
                 config.setProperty("materialType", System.getenv("materialType"));
                 config.setProperty("billToDefault", System.getenv("billToDefault"));
                 config.setProperty("billToApprovals", System.getenv("billToApprovals"));
+                config.setProperty("acquisitionsUnitName", System.getenv("acquisitionsUnitName"));
 
             } else {
                PropertiesConfiguration props = new PropertiesConfiguration();
