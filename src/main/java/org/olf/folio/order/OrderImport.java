@@ -78,6 +78,33 @@ public class OrderImport {
         return aus.getJSONObject(0).getString("id");
     }
 
+    private String getOrganizationUuid(
+            String baseOkapEndpoint,
+            String token,
+            String name
+    ) throws Exception {
+        String resp = this.apiService.callApiGet(
+                baseOkapEndpoint + "organizations/organizations"
+                + "?query=((name="
+                + URLEncoder.encode("\"" + name + "\"))"),
+                token);
+        if (resp == null) {
+            return null;
+        }
+
+        JSONObject obj = new JSONObject(resp);
+        if (!obj.has("organizations")) {
+            return null;
+        }
+
+        JSONArray aus = obj.getJSONArray("organizations");
+        if (aus.isEmpty() || !aus.getJSONObject(0).has("id")) {
+            return null;
+        }
+
+        return aus.getJSONObject(0).getString("id");
+    }
+
     public  JSONArray  upload(String fileName) throws IOException, InterruptedException, Exception {
         long start = 0L; // to be used for timing
         long end = 0L;  // to be used for timing
@@ -98,6 +125,7 @@ public class OrderImport {
         String billToDefault = (String) getMyContext().getAttribute("billToDefault");
         String billToApprovals = (String) getMyContext().getAttribute("billToApprovals");
         String acquisitionsUnitName = (String) getMyContext().getAttribute("acquisitionsUnitName");
+        String materialSupplierName = (String) getMyContext().getAttribute("materialSupplierName");
 
         JSONArray envErrors = validateEnvironment();
         if (envErrors != null) {
@@ -178,6 +206,8 @@ public class OrderImport {
 
         String acqUnitUuid = getAcquisitionsUnitUuid(baseOkapEndpoint, token,
                 acquisitionsUnitName);
+        String materialSupplierUuid = getOrganizationUuid(baseOkapEndpoint,
+                token, materialSupplierName);
 
         // CREATING THE PURCHASE ORDER
         JSONObject order = new JSONObject();
@@ -271,6 +301,9 @@ public class OrderImport {
                 // Holding and Item will be created afterwards via mod-copycat)
                 physical.put("createInventory", "Instance");
                 physical.put("materialType", lookupTable.get(materialTypeName));
+                if (materialSupplierUuid != null) {
+                    physical.put("materialSupplier", materialSupplierUuid);
+                };
                 orderLine.put("physical", physical);
                 orderLine.put("orderFormat", "Physical Resource");
                 cost.put("listUnitPrice", price);
