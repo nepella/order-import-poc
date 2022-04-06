@@ -101,6 +101,7 @@ public class OrderImport {
         String billToApprovals = (String) getMyContext().getAttribute("billToApprovals");
         String acquisitionsUnitName = (String) getMyContext().getAttribute("acquisitionsUnitName");
         String materialSupplierName = (String) getMyContext().getAttribute("materialSupplierName");
+        String expenseClassName = (String) getMyContext().getAttribute("expenseClassName");
 
         JSONArray envErrors = validateEnvironment();
         if (envErrors != null) {
@@ -185,6 +186,8 @@ public class OrderImport {
         String materialSupplierUuid = getEntityUuid(baseOkapEndpoint, token,
                 "organizations/organizations", "organizations",
                 materialSupplierName);
+        String expenseClassUuid = getEntityUuid(baseOkapEndpoint, token,
+                "finance/expense-classes", "expenseClasses", expenseClassName);
 
         // CREATING THE PURCHASE ORDER
         JSONObject order = new JSONObject();
@@ -404,6 +407,7 @@ public class OrderImport {
                 fundDist.put("fundId", fundId);
                 fundDist.put("distributionType", "percentage");
                 fundDist.put("value", 100);
+                fundDist.put("expenseClassId", expenseClassUuid);
                 funds.put(fundDist);
                 orderLine.put("fundDistribution", funds);
 

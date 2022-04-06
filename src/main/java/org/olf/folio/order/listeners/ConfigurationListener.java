@@ -36,6 +36,7 @@ public class ConfigurationListener implements ServletContextListener {
                 config.setProperty("billToApprovals", System.getenv("billToApprovals"));
                 config.setProperty("acquisitionsUnitName", System.getenv("acquisitionsUnitName"));
                 config.setProperty("materialSupplierName", System.getenv("materialSupplierName"));
+                config.setProperty("expenseClassName", System.getenv("expenseClassName"));
 
             } else {
                PropertiesConfiguration props = new PropertiesConfiguration();
