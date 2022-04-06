@@ -51,13 +51,15 @@ public class OrderImport {
     private ApiService apiService;
     MarcUtils marcUtils = new MarcUtils();
 
-    private String getAcquisitionsUnitUuid(
-            String baseOkapEndpoint,
+    private String getEntityUuid(
+            String baseOkapiEndpoint,
             String token,
+            String entityPath,
+            String entityName,
             String name
     ) throws Exception {
         String resp = this.apiService.callApiGet(
-                baseOkapEndpoint + "acquisitions-units/units"
+                baseOkapiEndpoint + entityPath
                 + "?query=((name="
                 + URLEncoder.encode("\"" + name + "\"))"),
                 token);
@@ -66,38 +68,11 @@ public class OrderImport {
         }
 
         JSONObject obj = new JSONObject(resp);
-        if (!obj.has("acquisitionsUnits")) {
+        if (!obj.has(entityName)) {
             return null;
         }
 
-        JSONArray aus = obj.getJSONArray("acquisitionsUnits");
-        if (aus.isEmpty() || !aus.getJSONObject(0).has("id")) {
-            return null;
-        }
-
-        return aus.getJSONObject(0).getString("id");
-    }
-
-    private String getOrganizationUuid(
-            String baseOkapEndpoint,
-            String token,
-            String name
-    ) throws Exception {
-        String resp = this.apiService.callApiGet(
-                baseOkapEndpoint + "organizations/organizations"
-                + "?query=((name="
-                + URLEncoder.encode("\"" + name + "\"))"),
-                token);
-        if (resp == null) {
-            return null;
-        }
-
-        JSONObject obj = new JSONObject(resp);
-        if (!obj.has("organizations")) {
-            return null;
-        }
-
-        JSONArray aus = obj.getJSONArray("organizations");
+        JSONArray aus = obj.getJSONArray(entityName);
         if (aus.isEmpty() || !aus.getJSONObject(0).has("id")) {
             return null;
         }
@@ -204,10 +179,12 @@ public class OrderImport {
         logger.trace("NEXT PO NUMBER: " + poNumberObj.get("poNumber"));
         // does this have to be a UUID object?
 
-        String acqUnitUuid = getAcquisitionsUnitUuid(baseOkapEndpoint, token,
+        String acqUnitUuid = getEntityUuid(baseOkapEndpoint, token,
+                "acquisitions-units/units", "acquisitionsUnits",
                 acquisitionsUnitName);
-        String materialSupplierUuid = getOrganizationUuid(baseOkapEndpoint,
-                token, materialSupplierName);
+        String materialSupplierUuid = getEntityUuid(baseOkapEndpoint, token,
+                "organizations/organizations", "organizations",
+                materialSupplierName);
 
         // CREATING THE PURCHASE ORDER
         JSONObject order = new JSONObject();
